@@ -13,7 +13,7 @@ Libraries used : ffmpeg-5.1.2-essentials_build (GPLv3)
 
 FFmpeg source code for the version used : /ffmpeg-snapshot.tar.bz2
 
-
+Operating environment : Windows10 (Windows 11 is out of support.)
 
 //////////////////////////////////////////////////////////////////////
 
