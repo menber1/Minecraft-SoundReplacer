@@ -42,10 +42,6 @@ class PanelSoundData(wx.Panel):
     def get_sounddatalist(self):
         return self.list_sounddata
 
-    def switch_viewermode(self):
-        for sounddata in self.list_sounddata:
-            sounddata.switch_viewermode()
-
     def get_pngfilepath(self, path_ogg=None):
         pass
 

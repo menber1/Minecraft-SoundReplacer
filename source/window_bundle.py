@@ -22,15 +22,15 @@ class WindowBundle(wx.Frame):
         self.toolbar = wx.Panel(self, pos=(0,0), size=(self.WIDTH, self.TOOLBAR_HEIGHT))
         self.toolbar.SetBackgroundColour(wx.WHITE)
 
-        self.button_add = wx.BitmapButton(self.toolbar, -1, wx.Bitmap('./image/button_plus.png'), pos=(15, 10), size=(16, 16))
+        self.button_add = wx.BitmapButton(self.toolbar, -1, wx.Bitmap('./image/button_plus.png'), pos=(20, 10), size=(16, 16))
         self.button_add.SetBitmapPressed(wx.Bitmap('./image/button_plus_on.png'))
-        self.button_add.SetBitmapFocus(wx.Bitmap('./image/button_plus_hover.png'))
+        self.button_add.SetBitmapCurrent(wx.Bitmap('./image/button_plus_hover.png'))
         self.button_add.SetToolTip('追加')
         self.button_add.Bind(wx.EVT_BUTTON, self.click_add)
 
-        self.button_remove = wx.BitmapButton(self.toolbar, -1, wx.Bitmap('./image/button_cancel.png'), pos=(45, 10), size=(16, 16))
+        self.button_remove = wx.BitmapButton(self.toolbar, -1, wx.Bitmap('./image/button_cancel.png'), pos=(55, 10), size=(16, 16))
         self.button_remove.SetBitmapPressed(wx.Bitmap('./image/button_cancel_on.png'))
-        self.button_remove.SetBitmapFocus(wx.Bitmap('./image/button_cancel_hover.png'))
+        self.button_remove.SetBitmapCurrent(wx.Bitmap('./image/button_cancel_hover.png'))
         self.button_remove.SetToolTip('選択を除外する')
         self.button_remove.Bind(wx.EVT_BUTTON, self.click_remove)
 

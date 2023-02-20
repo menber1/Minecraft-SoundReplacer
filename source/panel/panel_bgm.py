@@ -53,9 +53,11 @@ class PanelBGM(wx.Panel):
     def get_sounddatalist(self):
         return self.list_sounddata
 
+    '''
     def switch_viewermode(self):
         for sounddata in self.list_sounddata:
             sounddata.switch_viewermode()
+    '''
 
     def set_sourcepathlist(self, pathlist):
         for path, sounddata in zip(pathlist, self.list_sounddata):
@@ -63,35 +65,16 @@ class PanelBGM(wx.Panel):
 
     def add_sounddata(self):
 
-        list_sounddata_source_and_title = []
-        new_list_sounddata = []
+        title = self.CATEGORY + str(self._get_maxindex() + 1)
+        pos = (0, len(self.list_sounddata) * self.HEIGHT_SOUNDDATA)
 
-        for sounddata_ in self.list_sounddata:
-            list_sounddata_source_and_title.append(
-                sounddata_.get_source_and_title())
+        self.scrolledwindow.Scroll(0, 0)
+        new_sounddata = SoundDataBGM(self.scrolledwindow, self, title, pos)
+        self.list_sounddata.append(new_sounddata)
 
-        new_title = self.CATEGORY + str(self._get_maxindex() + 1)
-        list_sounddata_source_and_title.append(('', new_title))
-
-        self.scrolledwindow.Destroy()
-        self.scrolledwindow = wx.ScrolledWindow(self, -1, style=wx.HSCROLL | wx.VERTICAL, pos=(0, 0),
-                                                size=(self.WIDTH, self.HEIGHT))
-
-        pos_sounddata = (0, 0)
-        for source, title in list_sounddata_source_and_title:
-            sounddata = SoundDataBGM(
-                self.scrolledwindow, self, title, pos_sounddata)
-            sounddata.set_sourcepath(source)
-            new_list_sounddata.append(sounddata)
-            pos_sounddata = (0, pos_sounddata[1] + self.HEIGHT_SOUNDDATA)
-
-        count = len(new_list_sounddata)
-        totalheight = self.HEIGHT_SOUNDDATA * count
+        totalheight = len(self.list_sounddata) * self.HEIGHT_SOUNDDATA
         self.scrolledwindow.SetScrollbars(
             0, self.HEIGHT_SOUNDDATA, 0, int(totalheight / self.HEIGHT_SOUNDDATA))
-
-        self.list_sounddata.clear()
-        self.list_sounddata = new_list_sounddata
         self._switch_plusbutton()
         self.scrolledwindow.Scroll(
             0, self.scrolledwindow.GetVirtualSize().GetHeight())
@@ -167,3 +150,37 @@ class PanelBGM(wx.Panel):
                 if maxindex < index_:
                     maxindex = index_
         return maxindex
+
+    def search(self, keyword):
+
+        self.list_sounddata[-1].hide_addbutton()
+        self.scrolledwindow.Scroll(0, 0)
+        posy = 0
+
+        if keyword == '':
+            for sounddata in self.list_sounddata:
+                sounddata.show()
+                sounddata.SetPosition((0, posy))
+                posy = posy + sounddata.HEIGHT
+
+            self._switch_plusbutton()
+            totalheight = len(self.list_sounddata) * self.HEIGHT_SOUNDDATA
+            self.scrolledwindow.SetScrollbars(
+                0, self.HEIGHT_SOUNDDATA, 0, int(totalheight / self.HEIGHT_SOUNDDATA))
+
+        else:
+            for sounddata in self.list_sounddata:
+                title = sounddata.get_title()
+                title = title[title.index('.') + 1:]
+                if keyword in title:
+                    sounddata.show()
+                    sounddata.SetPosition((0, posy))
+                    posy = posy + self.HEIGHT_SOUNDDATA
+                else:
+                    sounddata.hide()
+                    sounddata.SetPosition((0, posy))
+
+            self.scrolledwindow.SetScrollbars(
+                0, self.HEIGHT_SOUNDDATA, 0, int(posy / self.HEIGHT_SOUNDDATA))
+
+        self.Refresh()

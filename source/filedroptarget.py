@@ -1,6 +1,5 @@
 import wx
 
-
 class FileDropTarget(wx.FileDropTarget):
 
     def __init__(self, sounddata, statictext):
@@ -10,14 +9,15 @@ class FileDropTarget(wx.FileDropTarget):
 
     def OnDropFiles(self, x, y, pathlist):
 
-        if not self.sounddata.get_flag_drag_and_drop():
+        if not self.sounddata.get_flag_drag_and_drop():#閲覧モード
             return
+
+        # 複数のパス指定 ---------------------------------------------------------
 
         if 1 < len(pathlist):
             for resource in pathlist:
                 if not self.sounddata.check_ext(resource):
-                    dialog = wx.MessageDialog(
-                        self.sounddata, 'サポートされない拡張子が含まれています。', 'メッセージ', style=wx.OK)
+                    dialog = wx.MessageDialog(self.sounddata, 'サポートされない拡張子が含まれています。', 'メッセージ', style=wx.OK)
                     dialog.ShowModal()
                     dialog.Destroy()
                     return False
@@ -26,6 +26,8 @@ class FileDropTarget(wx.FileDropTarget):
             self.sounddata.get_parentpanel().set_sourcepathlist(pathlist_)
             return True
 
+        # 一つのパス指定 ---------------------------------------------------------
+
         path = pathlist[0]
         path = self.sounddata.replace_escape(path)
 
@@ -33,8 +35,7 @@ class FileDropTarget(wx.FileDropTarget):
             self.sounddata.set_sourcepath(path)
             return True
         else:
-            dialog = wx.MessageDialog(
-                self.sounddata, 'サポートされない拡張子です。', 'メッセージ', style=wx.OK)
+            dialog = wx.MessageDialog(self.sounddata, 'サポートされない拡張子です。', 'メッセージ', style=wx.OK)
             dialog.ShowModal()
             dialog.Destroy()
             return False

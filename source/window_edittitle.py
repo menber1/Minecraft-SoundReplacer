@@ -1,42 +1,38 @@
 import re
+
 import wx
+
 from source.message import Message
+
 
 class EditTitleWindow(wx.Dialog):
 
-    WIDTH = 210
-    HEIGHT = 110
+    WIDTH = 235
+    HEIGHT = 80
 
     def __init__(self, sounddata_bgm, nowtitle):
-        wx.Frame.__init__(self, sounddata_bgm, -1, 'edit title',
-                          size=(self.WIDTH, self.HEIGHT))
+        wx.Frame.__init__(self, sounddata_bgm, -1, 'edit title', size=(self.WIDTH, self.HEIGHT))
 
         self.SetBackgroundColour(wx.WHITE)
         self.sounddata_bgm = sounddata_bgm
         self.nowtitle = nowtitle
 
-        self.textctrl = wx.TextCtrl(
-            self, -1, nowtitle, pos=(15, 5), size=(165, 23))
-
-        self.button_cancel = wx.Button(
-            self, -1, 'cancel', pos=(15, 35), size=(80, 25))
-        self.button_cancel.Bind(wx.EVT_BUTTON, self.click_cancel)
-
-        self.button_ok = wx.Button(
-            self, -1, 'ok', pos=(100, 35), size=(80, 25))
-        self.button_ok.Bind(wx.EVT_BUTTON, self.click_ok)
+        self.textctrl = wx.TextCtrl(self, -1, nowtitle, pos=(15, 5), size=(165, 23))
         self.textctrl.Bind(wx.EVT_CHAR_HOOK, self.keydown_enter)
+
+        self.button_ok = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_check.png'), pos=(190, 10), size=(16, 16))
+        self.button_ok.SetBitmapPressed(wx.Bitmap('./image/button_check_on.png'))
+        self.button_ok.SetBitmapCurrent(wx.Bitmap('./image/button_check_hover.png'))
+        self.button_ok.SetToolTip('ok')
+        self.button_ok.Bind(wx.EVT_BUTTON, self.click_ok)
 
         self.ShowModal()
 
     def keydown_enter(self, event):
         if event.GetKeyCode() == wx.WXK_RETURN:
-            self.set_newtitle()
+           self.set_newtitle()
         else:
             event.Skip()
-
-    def click_cancel(self, event):
-        self.Close()
 
     def click_ok(self, event):
         self.set_newtitle()

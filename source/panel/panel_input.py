@@ -49,7 +49,7 @@ class PanelInput(wx.Panel):
                                                 size=(16, 16))
         self.button_clearicon.SetBitmapPressed(
             wx.Bitmap('./image/button_cancel_on.png'))
-        self.button_clearicon.SetBitmapFocus(
+        self.button_clearicon.SetBitmapCurrent(
             wx.Bitmap('./image/button_cancel_hover.png'))
         self.button_clearicon.SetToolTip('アイコン画像クリア')
         self.button_clearicon.Bind(wx.EVT_BUTTON, self.click_clearicon)
@@ -80,7 +80,7 @@ class PanelInput(wx.Panel):
                                                   size=(16, 16))
         self.button_header_uuid.SetBitmapPressed(
             wx.Bitmap('./image/button_random_on.png'))
-        self.button_header_uuid.SetBitmapFocus(
+        self.button_header_uuid.SetBitmapCurrent(
             wx.Bitmap('./image/button_random_hover.png'))
         self.button_header_uuid.SetToolTip('uuid生成')
         self.button_header_uuid.Bind(wx.EVT_BUTTON, self.click_header_newid)
@@ -89,7 +89,7 @@ class PanelInput(wx.Panel):
                                                    size=(16, 16))
         self.button_modules_uuid.SetBitmapPressed(
             wx.Bitmap('./image/button_random_on.png'))
-        self.button_modules_uuid.SetBitmapFocus(
+        self.button_modules_uuid.SetBitmapCurrent(
             wx.Bitmap('./image/button_random_hover.png'))
         self.button_modules_uuid.SetToolTip('uuid生成')
         self.button_modules_uuid.Bind(wx.EVT_BUTTON, self.click_modules_newid)
@@ -98,7 +98,7 @@ class PanelInput(wx.Panel):
                                                 size=(16, 16))
         self.button_reference.SetBitmapPressed(
             wx.Bitmap('./image/button_folder_on.png'))
-        self.button_reference.SetBitmapFocus(
+        self.button_reference.SetBitmapCurrent(
             wx.Bitmap('./image/button_folder_hover.png'))
         self.button_reference.SetToolTip('保存先フォルダ選択')
         self.button_reference.Bind(wx.EVT_BUTTON, self.click_reference)
@@ -133,7 +133,7 @@ class PanelInput(wx.Panel):
             self, -1, wx.Bitmap('./image/button_folder.png'), pos=(505, 225), size=(16, 16))
         self.button_bundle.SetBitmapPressed(
             wx.Bitmap('./image/button_folder_on.png'))
-        self.button_bundle.SetBitmapFocus(
+        self.button_bundle.SetBitmapCurrent(
             wx.Bitmap('./image/button_folder_hover.png'))
         self.button_bundle.SetToolTip('リソースパックに同梱するフォルダを選択')
         self.button_bundle.Bind(wx.EVT_BUTTON, self.click_bundle)
@@ -202,7 +202,7 @@ class PanelInput(wx.Panel):
         header_uuid = self.textctrl_header_uuid.GetValue()
         modules_uuid = self.textctrl_modules_uuid.GetValue()
         version = self.textctrl_version.GetValue()
-        bundle = self.bundle  # 20230209
+        bundle = self.bundle
 
         if name == '':
             Message().show(self, 'name が空欄です。')
@@ -216,7 +216,7 @@ class PanelInput(wx.Panel):
             Message.show(self, 'modules uuid が空欄です。')
             return
 
-        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):
+        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
             Message().show(self, '設定を保存しました。')
             self.soundwindow.get_startwindow().updatelist()
             self.soundwindow.Close()
@@ -254,7 +254,7 @@ class PanelInput(wx.Panel):
         ConfigManager().set_packformat(self.combobox_version.GetStringSelection())
 
         if savepath == '':
-            savepath = self.get_desktoppath()  # 20230210
+            savepath = self.get_desktoppath()
             if savepath == '':
                 Message().show(self, '保存先を指定してください。')
                 return
@@ -265,9 +265,9 @@ class PanelInput(wx.Panel):
         flag_zip = self.checkbox_zip_compression.GetValue()
 
         if edition == 'BE' and flag_zip == True:
-            resourcepack = os.path.join(savepath, name + '.mcpack')  # 20230210
+            resourcepack = os.path.join(savepath, name + '.mcpack')
         elif edition == 'JE' and flag_zip == True:
-            resourcepack = os.path.join(savepath, name + '.zip')  # 20230210
+            resourcepack = os.path.join(savepath, name + '.zip')
         else:
             resourcepack = os.path.join(savepath, name)
 
@@ -310,6 +310,7 @@ class PanelInput(wx.Panel):
             shutil.make_archive(savepath_name, 'zip', root_dir='./temp')
 
         elif flag_zip == True and edition == 'BE':
+
             savepath_temp = savepath + '/temp'
             os.mkdir(savepath_temp)
             savepath_temp_name = savepath_temp + '/' + name
@@ -321,8 +322,8 @@ class PanelInput(wx.Panel):
             shutil.copytree('./temp', savepath_name)
 
         Message().show(self, 'リソースパックを作成しました。')
-        self.save_database(self.database_index, name, self.icon, description,
-                           header_uuid, modules_uuid, version, bandle)  # 20230209
+        self.save_database(self.database_index, name, self.icon,
+                           description, header_uuid, modules_uuid, version, bandle)
         self.soundwindow.get_startwindow().updatelist()
         self.soundwindow.Close()
 
@@ -344,7 +345,7 @@ class PanelInput(wx.Panel):
         im = Image.open(path)
         width, height = im.size
 
-        if width < height:  # 縦長
+        if width < height:
             trimsize = int((height - width) / 2)
             im = im.crop((0, trimsize, width, trimsize + width))
 
@@ -375,8 +376,8 @@ class PanelInput(wx.Panel):
             DatabaseHelper().insert_record(name, icon, description, header_uuid,
                                            modules_uuid, version, newsourcelist, bundle)
         else:
-            DatabaseHelper().update_record(index, name, icon, description, header_uuid,
-                                           modules_uuid, version, newsourcelist, bundle)
+            DatabaseHelper().update_record(index, name, icon, description,
+                                           header_uuid, modules_uuid, version, newsourcelist, bundle)
 
         return True
 
@@ -485,7 +486,7 @@ class PanelInput(wx.Panel):
                 return False
 
         thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(
-            newsourcelist, minecraft_edision))
+            newsourcelist, minecraft_edision))  # progressDialog 非表示のため、第三引数省略。
         thread_processffmpeg.start()
         thread_processffmpeg.join()
 
@@ -526,6 +527,7 @@ class PanelInput(wx.Panel):
                 oggfile = distdir + '/' + str(index) + '.ogg'
             else:
                 basename = os.path.basename(ogg)
+
                 if basename == 'bass.ogg':
                     basename = 'bassattack.ogg'
 
@@ -658,8 +660,7 @@ class PanelInput(wx.Panel):
         self.textctrl_modules_uuid.SetLabel(packdata[5])
         self.textctrl_version.SetLabel(packdata[6])
         self.bundle = packdata[7]
-        self.label_bundle.SetLabel(
-            'bundle : ' + str(len(self.bundle)))
+        self.label_bundle.SetLabel('bundle : ' + str(len(self.bundle)))
 
     def _get_addtitlelist_definitionsjson(self):
 
