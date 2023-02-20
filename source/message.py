@@ -15,7 +15,7 @@ class Message():
         dialog = wx.MessageDialog(parent, message, 'メッセージ', style=wx.YES_NO)
         ans = dialog.ShowModal()
         dialog.Destroy()
-        if ans == 5104:  # YES 5103 NO 5104
+        if ans == 5104:
             return False
         else:
             return True

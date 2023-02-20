@@ -53,12 +53,6 @@ class PanelBGM(wx.Panel):
     def get_sounddatalist(self):
         return self.list_sounddata
 
-    '''
-    def switch_viewermode(self):
-        for sounddata in self.list_sounddata:
-            sounddata.switch_viewermode()
-    '''
-
     def set_sourcepathlist(self, pathlist):
         for path, sounddata in zip(pathlist, self.list_sounddata):
             sounddata.set_sourcepath(path)

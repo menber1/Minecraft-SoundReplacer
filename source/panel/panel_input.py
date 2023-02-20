@@ -486,7 +486,7 @@ class PanelInput(wx.Panel):
                 return False
 
         thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(
-            newsourcelist, minecraft_edision))  # progressDialog 非表示のため、第三引数省略。
+            newsourcelist, minecraft_edision))
         thread_processffmpeg.start()
         thread_processffmpeg.join()
 

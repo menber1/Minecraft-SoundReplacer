@@ -2,6 +2,7 @@ import wx
 import os
 import glob
 
+
 class VanillaResourcePack():
 
     def __init__(self):
@@ -34,7 +35,6 @@ class VanillaResourcePack():
             filepath = filepath.replace('\\', '/')
             pathlist.append(filepath)
         return pathlist
-
 
     def get_sound_definitions_json(self):
         return './Vanilla_Resource_Pack_1.19.0/sounds/sound_definitions.json'

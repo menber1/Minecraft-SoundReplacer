@@ -1,5 +1,4 @@
 import os
-
 import wx
 
 from source.panel.panel_creative import PanelCreative
@@ -22,7 +21,8 @@ class SoundWindow(wx.Frame):
     HEIGHT = 525
 
     def __init__(self, startwindow, newsourcelist=None, data_for_panelinput=None):
-        wx.Frame.__init__(self, startwindow, -1, 'Minecraft SoundReplacer - SoundList', size=(self.WIDTH, self.HEIGHT))
+        wx.Frame.__init__(
+            self, startwindow, -1, 'Minecraft SoundReplacer - SoundList', size=(self.WIDTH, self.HEIGHT))
 
         self.Bind(wx.EVT_CLOSE, self.close_frame)
 
@@ -33,14 +33,19 @@ class SoundWindow(wx.Frame):
         self.SetPosition((x + 50, y + 50))
         self.startwindow = startwindow
 
-        element_array = ('records', 'menu', 'game', 'creative', 'end', 'nether', 'water', 'note', 'bgm ( original )', 'se ( original )')
-        self.combobox = wx.ComboBox(self, wx.ID_ANY, choices=element_array, style=wx.CB_DROPDOWN|wx.CB_READONLY, pos=(25, 10), size=(110, 25))
+        element_array = ('records', 'menu', 'game', 'creative', 'end',
+                         'nether', 'water', 'note', 'bgm ( original )', 'se ( original )')
+        self.combobox = wx.ComboBox(self, wx.ID_ANY, choices=element_array,
+                                    style=wx.CB_DROPDOWN | wx.CB_READONLY, pos=(25, 10), size=(110, 25))
         self.combobox.Select(0)
         self.combobox.Bind(wx.EVT_COMBOBOX, self.select_combobox)
 
-        self.button_next = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_export.png'), pos=(165, 12), size=(16, 16))
-        self.button_next.SetBitmapPressed(wx.Bitmap('./image/button_export_on.png'))
-        self.button_next.SetBitmapCurrent(wx.Bitmap('./image/button_export_hover.png'))
+        self.button_next = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_export.png'), pos=(165, 12), size=(16, 16))
+        self.button_next.SetBitmapPressed(
+            wx.Bitmap('./image/button_export_on.png'))
+        self.button_next.SetBitmapCurrent(
+            wx.Bitmap('./image/button_export_hover.png'))
         self.button_next.SetToolTip('エクスポート画面へ')
         self.button_next.Bind(wx.EVT_BUTTON, self.click_next)
 
@@ -63,14 +68,12 @@ class SoundWindow(wx.Frame):
         if newsourcelist != None:
             self.newsourcelist_in_panel_sounddata(newsourcelist)
 
-
     def close_frame(self, event):
         self.startwindow.destroy_soundwindow()
 
-
     def select_combobox(self, event):
 
-        self.button_next.Show() # 20230213
+        self.button_next.Show()
         name = self.combobox.GetStringSelection()
 
         if name == 'records':
@@ -95,9 +98,8 @@ class SoundWindow(wx.Frame):
             self.switch_panel(self.panel_se)
 
     def click_next(self, event):
-        self.button_next.Hide() # 20230213
+        self.button_next.Hide()
         self.switch_panel(self.panel_input)
-
 
     def switch_panel(self, panel):
 
@@ -138,23 +140,6 @@ class SoundWindow(wx.Frame):
         return all
 
     def newsourcelist_in_panel_sounddata(self, list_source_and_ogg):
-        '''
-        for source, ogg in list_source_and_ogg:
-            panel_sounddata = self._get_panelsounddata(ogg)
-
-            if self.panel_bgm is panel_sounddata or self.panel_se is panel_sounddata:
-                panel_sounddata.create_sounddata(ogg, source)
-            else:
-                list_sounddata = panel_sounddata.get_sounddatalist()
-                for sounddata in list_sounddata:
-                    if sounddata.get_oggfilepath() == ogg:
-                        sounddata.set_sourcepath(source)
-        '''
-
-        # 2023-02-03 ---------------------------------------------------
-        # bgmとseのみソートを行うため書き換えた。
-        # 変数 list_source_and_oggは、各パネルのデータ全てが含まれているため
-        # bgm se othersの三つのリストに分割する。bgm, seのみにソート処理
 
         list_source_and_ogg_bgm = []
         list_source_and_ogg_se = []
@@ -171,13 +156,15 @@ class SoundWindow(wx.Frame):
                 list_source_and_ogg_others.append([source, ogg])
 
         if list_source_and_ogg_bgm != []:
-            _list_source_and_ogg_bgm = sorted(list_source_and_ogg_bgm, key=lambda x: x[1])
+            _list_source_and_ogg_bgm = sorted(
+                list_source_and_ogg_bgm, key=lambda x: x[1])
             for source, ogg in _list_source_and_ogg_bgm:
                 panel_sounddata = self._get_panelsounddata(ogg)
                 panel_sounddata.create_sounddata(ogg, source)
 
         if list_source_and_ogg_se != []:
-            _list_source_and_ogg_se = sorted(list_source_and_ogg_se, key=lambda x: x[1])
+            _list_source_and_ogg_se = sorted(
+                list_source_and_ogg_se, key=lambda x: x[1])
             for source, ogg in _list_source_and_ogg_se:
                 panel_sounddata = self._get_panelsounddata(ogg)
                 panel_sounddata.create_sounddata(ogg, source)
@@ -190,12 +177,11 @@ class SoundWindow(wx.Frame):
                     if sounddata.get_oggfilepath() == ogg:
                         sounddata.set_sourcepath(source)
 
-
     def _get_panelsounddata(self, path_ogg):
 
         category, index = os.path.splitext(path_ogg)
 
-        if category == 'bgm' or category == 'se': # bgm, seはカテゴリーをoggの代用
+        if category == 'bgm' or category == 'se':
             oggdir = category
         else:
             oggdir = os.path.basename(os.path.dirname(path_ogg))
@@ -223,36 +209,14 @@ class SoundWindow(wx.Frame):
         else:
             return False
 
-
-    '''
-    def switch_viewermode(self):
-        self.button_next.Hide()
-        self.panel_records.switch_viewermode()
-        self.panel_menu.switch_viewermode()
-        self.panel_game.switch_viewermode()
-        self.panel_creative.switch_viewermode()
-        self.panel_end.switch_viewermode()
-        self.panel_nether.switch_viewermode()
-        self.panel_water.switch_viewermode()
-        self.panel_note.switch_viewermode()
-        self.panel_bgm.switch_viewermode()
-        self.panel_se.switch_viewermode()
-    '''
-
     def get_startwindow(self):
         return self.startwindow
 
-
     def get_inputpanel(self):
         return self.panel_input
-
 
     def search_sounddata(self, keyword):
         if self.panel_bgm.IsShown():
             self.panel_bgm.search(keyword)
         elif self.panel_se.IsShown():
             self.panel_se.search(keyword)
-
-
-
-

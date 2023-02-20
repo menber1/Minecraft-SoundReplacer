@@ -13,53 +13,70 @@ class SoundData(wx.Panel):
     HEIGHT = 72
 
     def __init__(self, scrollwindow, panel_sounddata, path_ogg, pos_):
-        wx.Panel.__init__(self, scrollwindow, pos=pos_, size=(self.WIDTH, self.HEIGHT))
+        wx.Panel.__init__(self, scrollwindow, pos=pos_,
+                          size=(self.WIDTH, self.HEIGHT))
 
         self.SetBackgroundColour('WHITE')
-        line = wx.Panel(self, pos=(15,self.HEIGHT-1), size=(self.WIDTH - 10, 1))
+        line = wx.Panel(self, pos=(15, self.HEIGHT-1),
+                        size=(self.WIDTH - 10, 1))
         line.SetBackgroundColour('#969696')
 
-        self.path_ogg = path_ogg #oggfile
-        self.path_sourcefile = '' #音源
+        self.path_ogg = path_ogg
+        self.path_sourcefile = ''
         self.flag_sound_run = False
         self.panel_sounddata = panel_sounddata
         self.flag_drag_and_drop = True
 
         path_pngfile = self.panel_sounddata.get_pngfilepath(path_ogg)
-        self.icon = wx.StaticBitmap(self, -1, wx.Bitmap(path_pngfile), pos=(5,2), size=(64, 64))
+        self.icon = wx.StaticBitmap(
+            self, -1, wx.Bitmap(path_pngfile), pos=(5, 2), size=(64, 64))
 
         title = self.get_soundtitle()
-        self.statictext_recordtitle = wx.StaticText(self, -1, title, pos=(self.HEIGHT + 10, 10))
+        self.statictext_recordtitle = wx.StaticText(
+            self, -1, title, pos=(self.HEIGHT + 10, 10))
 
-        self.button_run_record = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_music.png'), pos=(self.HEIGHT + 10, 40), size=(16, 16))
-        self.button_run_record.SetBitmapPressed(wx.Bitmap('./image/button_music_on.png'))
-        self.button_run_record.SetBitmapCurrent(wx.Bitmap('./image/button_music_hover.png'))
+        self.button_run_record = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_music.png'), pos=(self.HEIGHT + 10, 40), size=(16, 16))
+        self.button_run_record.SetBitmapPressed(
+            wx.Bitmap('./image/button_music_on.png'))
+        self.button_run_record.SetBitmapCurrent(
+            wx.Bitmap('./image/button_music_hover.png'))
         self.button_run_record.SetToolTip('元音源再生')
         self.button_run_record.Bind(wx.EVT_BUTTON, self.click_run_record)
 
-        self.button_clear = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_cancel.png'), pos=(self.HEIGHT + 35, 40), size=(16, 16))
-        self.button_clear.SetBitmapPressed(wx.Bitmap('./image/button_cancel_on.png'))
-        self.button_clear.SetBitmapCurrent(wx.Bitmap('./image/button_cancel_hover.png'))
+        self.button_clear = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_cancel.png'), pos=(self.HEIGHT + 35, 40), size=(16, 16))
+        self.button_clear.SetBitmapPressed(
+            wx.Bitmap('./image/button_cancel_on.png'))
+        self.button_clear.SetBitmapCurrent(
+            wx.Bitmap('./image/button_cancel_hover.png'))
         self.button_clear.SetToolTip('設定消去')
         self.button_clear.Bind(wx.EVT_BUTTON, self.click_clearbutton)
 
-        self.button_select = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(self.HEIGHT + 60, 40), size=(16, 16))
-        self.button_select.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
-        self.button_select.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_select = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(self.HEIGHT + 60, 40), size=(16, 16))
+        self.button_select.SetBitmapPressed(
+            wx.Bitmap('./image/button_folder_on.png'))
+        self.button_select.SetBitmapCurrent(
+            wx.Bitmap('./image/button_folder_hover.png'))
         self.button_select.SetToolTip('フォルダ選択')
         self.button_select.Bind(wx.EVT_BUTTON, self.click_selectbutton)
 
-        self.button_run_soundfile = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_sound.png'), pos=(self.HEIGHT + 85, 40), size=(16, 16))
-        self.button_run_soundfile.SetBitmapPressed(wx.Bitmap('./image/button_sound_on.png'))
-        self.button_run_soundfile.SetBitmapCurrent(wx.Bitmap('./image/button_sound_hover.png'))
+        self.button_run_soundfile = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_sound.png'), pos=(self.HEIGHT + 85, 40), size=(16, 16))
+        self.button_run_soundfile.SetBitmapPressed(
+            wx.Bitmap('./image/button_sound_on.png'))
+        self.button_run_soundfile.SetBitmapCurrent(
+            wx.Bitmap('./image/button_sound_hover.png'))
         self.button_run_soundfile.SetToolTip('ファイル再生')
         self.button_run_soundfile.Bind(wx.EVT_BUTTON, self.click_run_soundfile)
 
-        varticalline = wx.Panel(self, -1, pos=(200,10), size=(1,53))
+        varticalline = wx.Panel(self, -1, pos=(200, 10), size=(1, 53))
         varticalline.SetBackgroundColour('#969696')
 
         path_replacesound = ''
-        self.statictext_replacesound = wx.StaticText(self, -1, path_replacesound, pos=(self.HEIGHT + 140, 10), size=(740,50))
+        self.statictext_replacesound = wx.StaticText(
+            self, -1, path_replacesound, pos=(self.HEIGHT + 140, 10), size=(740, 50))
 
         self.SetDropTarget(FileDropTarget(self, self.statictext_replacesound))
 
@@ -72,7 +89,7 @@ class SoundData(wx.Panel):
         return name
 
     def get_pngfilepath(self, path_sourcefile=None):
-        return '' #継承クラスで実装
+        return ''
 
     def click_clearbutton(self, event):
         self.statictext_replacesound.SetLabel('')
@@ -99,7 +116,8 @@ class SoundData(wx.Panel):
             if self.check_ext(path):
                 self.set_sourcepath(path)
             else:
-                dialog = wx.MessageDialog(self, 'サポートされない拡張子です。', 'メッセージ', style=wx.OK)
+                dialog = wx.MessageDialog(
+                    self, 'サポートされない拡張子です。', 'メッセージ', style=wx.OK)
                 dialog.ShowModal()
                 dialog.Destroy()
 
@@ -116,11 +134,7 @@ class SoundData(wx.Panel):
                 for row in reader:
                     if row[0] == filename:
                         webbrowser.open(row[2])
-                        return    
-
-                        
-    
-
+                        return
 
     def click_run_soundfile(self, event):
 
@@ -133,7 +147,6 @@ class SoundData(wx.Panel):
         path = '"' + self.path_sourcefile + '"'
         subprocess.run(path, shell=True)
 
-
     def split_longpath(self, path):
 
         if len(path) <= 110:
@@ -144,7 +157,7 @@ class SoundData(wx.Panel):
         front = path[0:enpos]
         back = path.replace(front, '')
 
-        if len(back) <=110:
+        if len(back) <= 110:
             return front + '\n' + back
 
         mid = back[0:91]
@@ -159,13 +172,11 @@ class SoundData(wx.Panel):
         sourcepath_ = self.split_longpath(sourcepath)
         self.statictext_replacesound.SetLabel(sourcepath_)
 
-        # 20230211 音楽ファイルが無効パスの場合はglayout sounddata_bgm.pyに同様の記述
         if os.path.isfile(self.path_sourcefile):
             self.statictext_replacesound.SetForegroundColour(wx.BLACK)
         else:
-            self.statictext_replacesound.SetForegroundColour((130,130,130))
+            self.statictext_replacesound.SetForegroundColour((130, 130, 130))
         self.statictext_replacesound.Refresh()
-
 
     def check_ext(self, path):
         name, ext = os.path.splitext(os.path.basename(path))
@@ -181,16 +192,8 @@ class SoundData(wx.Panel):
     def replace_escape(self, path):
         return path.replace('\\', '/')
 
-    '''
-    def switch_viewermode(self):
-        self.button_select.Disable()
-        self.button_clear.Disable()
-        self.flag_drag_and_drop = False
-    '''
-
     def get_flag_drag_and_drop(self):
         return self.flag_drag_and_drop
-
 
     def get_parentpanel(self):
         return self.panel_sounddata

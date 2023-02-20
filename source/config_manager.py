@@ -1,13 +1,13 @@
 import configparser
 import os
 
+
 class ConfigManager:
 
     def __init__(self):
         if not os.path.exists('./config.ini'):
             self.create_configfile()
 
-    # 'JE' or 'BE'
     def set_minecraft_edition(self, edition):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
@@ -20,7 +20,6 @@ class ConfigManager:
         config.read('./config.ini')
         return config.get('export', 'edition')
 
-    # zip
     def set_zip_compression(self, flag):
 
         if flag == True:
@@ -43,33 +42,26 @@ class ConfigManager:
         else:
             return False
 
-    # pack format
-
     def set_packformat(self, version):
 
-        # 2023-02-03 -------------------------
-        # add packformat 1.19.3 > 12
         packformat = 12
 
         if version == '1.16':
             packformat = 6
         elif version == '1.17':
             packformat = 7
-        elif version =='1.18':
+        elif version == '1.18':
             packformat = 8
         elif version == '1.19':
             packformat = 9
         elif version == '1.19.3':
             packformat = 12
 
-        # -------------------------------------
-
         config = configparser.RawConfigParser()
         config.read('./config.ini')
         config.set('export', 'pack_format', packformat)
         with open('./config.ini', 'w') as file:
             config.write(file)
-
 
     def get_packformat(self):
         config = configparser.RawConfigParser()
@@ -84,8 +76,6 @@ class ConfigManager:
 
     def get_version(self):
 
-        # 2023-02-03 --------------------------------------------
-        # add version 1.19.3
         packformat = self.get_packformat()
         if packformat == 6:
             return '1.16'
@@ -99,20 +89,3 @@ class ConfigManager:
             return '1.19.3'
         else:
             return '1.19.3'
-        # -------------------------------------------
-
-    '''
-       予めファイルを作成しているので必要無い。
-       def create_configfile(self):
-
-           config = configparser.ConfigParser()
-
-           section1 = 'export'
-           config.add_section(section1)
-           config.set(section1, 'edition', 'JE')
-           config.set(section1, 'zip_compression', False)
-           config.set(section1, 'packformat', 9)
-
-           with open('./config.ini', 'w') as file:
-               config.write(file)
-       '''

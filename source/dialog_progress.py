@@ -7,7 +7,8 @@ import os
 class ProgressDialog(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, 'progress message', size=(500, 100))
+        wx.Dialog.__init__(
+            self, parent, -1, 'progress message', size=(500, 100))
 
         self.SetBackgroundColour(wx.WHITE)
         self.base = wx.Panel(self)
@@ -25,4 +26,3 @@ class ProgressDialog(wx.Dialog):
     def close(self):
         self.flag_bar = False
         self.Close()
-

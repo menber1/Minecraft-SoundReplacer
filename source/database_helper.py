@@ -4,14 +4,12 @@ import sqlite3
 
 class DatabaseHelper():
 
-    PATH_DATABASE = './database_v2.db' #20230209
-
+    PATH_DATABASE = './database_v2.db'
 
     def __init__(self):
 
         if os.path.exists(self.PATH_DATABASE) == False:
             self.create_table()
-
 
     def create_table(self):
 
@@ -19,45 +17,52 @@ class DatabaseHelper():
         cursor = db.cursor()
 
         cursor.execute('CREATE TABLE packdata('
-                        'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-                        'name TEXT, '
-                        'icon TEXT, '
-                        'description TEXT, '
-                        'header_uuid TEXT, '
-                        'modules_uuid TEXT, '
-                        'version TEXT, '
-                        'sourcelist TEXT, '
-                        'bundle TEXT);') # 20230209
+                       'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+                       'name TEXT, '
+                       'icon TEXT, '
+                       'description TEXT, '
+                       'header_uuid TEXT, '
+                       'modules_uuid TEXT, '
+                       'version TEXT, '
+                       'sourcelist TEXT, '
+                       'bundle TEXT);')
         db.commit()
         db.close()
 
-    def insert_record(self, name, icon, description, header_uuid, modules_uuid, version, records, bundle): # 20230209
+    def insert_record(self, name, icon, description, header_uuid, modules_uuid, version, records, bundle):
 
         records = self.convert_cvs_from_list(records)
         bundle = self.convert_cvs_from_list_bundle(bundle)
         db = sqlite3.connect(self.PATH_DATABASE)
         cursor = db.cursor()
 
-        sql = 'INSERT INTO packdata VALUES (?,?,?,?,?,?,?,?,?);' # 20230209
-        data = (None, name, icon, description, header_uuid, modules_uuid, version, records, bundle)# 20230209
+        sql = 'INSERT INTO packdata VALUES (?,?,?,?,?,?,?,?,?);'
+        data = (None, name, icon, description, header_uuid,
+                modules_uuid, version, records, bundle)  # 20230209
         cursor.execute(sql, data)
         db.commit()
         db.close()
 
-    def update_record(self, index, name, icon, description, header_uuid, modules_uuid, version, records, bundle):#20230209
+    def update_record(self, index, name, icon, description, header_uuid, modules_uuid, version, records, bundle):  # 20230209
 
         records = self.convert_cvs_from_list(records)
-        bundle = self.convert_cvs_from_list_bundle(bundle)#20230209
+        bundle = self.convert_cvs_from_list_bundle(bundle)  # 20230209
         db = sqlite3.connect(self.PATH_DATABASE)
         cursor = db.cursor()
         cursor.execute('UPDATE packdata SET name=? WHERE id=?', (name, index))
         cursor.execute('UPDATE packdata SET icon=? WHERE id=?', (icon, index))
-        cursor.execute('UPDATE packdata SET description=? WHERE id=?', (description, index))
-        cursor.execute('UPDATE packdata SET header_uuid=? WHERE id=?', (header_uuid, index))
-        cursor.execute('UPDATE packdata SET modules_uuid=? WHERE id=?', (modules_uuid, index))
-        cursor.execute('UPDATE packdata SET version=? WHERE id=?', (version, index))
-        cursor.execute('UPDATE packdata SET sourcelist=? WHERE id=?', (records, index))
-        cursor.execute('UPDATE packdata SET bundle=? WHERE id=?', (bundle, index))#20230209
+        cursor.execute(
+            'UPDATE packdata SET description=? WHERE id=?', (description, index))
+        cursor.execute(
+            'UPDATE packdata SET header_uuid=? WHERE id=?', (header_uuid, index))
+        cursor.execute(
+            'UPDATE packdata SET modules_uuid=? WHERE id=?', (modules_uuid, index))
+        cursor.execute(
+            'UPDATE packdata SET version=? WHERE id=?', (version, index))
+        cursor.execute(
+            'UPDATE packdata SET sourcelist=? WHERE id=?', (records, index))
+        cursor.execute('UPDATE packdata SET bundle=? WHERE id=?',
+                       (bundle, index))  # 20230209
         db.commit()
         db.close()
 
@@ -88,8 +93,9 @@ class DatabaseHelper():
             # row[8] bundle
 
             newsourcelist = self.convert_list_from_cvs(row[7])
-            bundlelist = self.convert_list_from_cvs_bundle(row[8]) #20230209
-            packdatalist.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], newsourcelist, bundlelist]) #20230209
+            bundlelist = self.convert_list_from_cvs_bundle(row[8])  # 20230209
+            packdatalist.append([row[0], row[1], row[2], row[3], row[4],
+                                row[5], row[6], newsourcelist, bundlelist])  # 20230209
 
         db.close()
         packdatalist.reverse()
@@ -116,16 +122,15 @@ class DatabaseHelper():
 
         return list_newsource
 
-
-    def convert_list_from_cvs_bundle(self, cvs):# 20230209
+    def convert_list_from_cvs_bundle(self, cvs):
 
         if cvs == '':
             return []
         else:
             _list = cvs.split('|')
-            return [x for x in _list if x] #空要素削除
+            return [x for x in _list if x]
 
-    def convert_cvs_from_list_bundle(self, bundle):# 20230209
+    def convert_cvs_from_list_bundle(self, bundle):
 
         if bundle == []:
             return ''

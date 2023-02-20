@@ -82,13 +82,6 @@ class StartWindow(wx.Frame):
         self.soundwindow = SoundWindow(self, data_for_soundwindow, data_for_panelinput)
         self.soundwindow.Show()
 
-    '''
-    def show_soundwindow_viewermode(self, data_for_soundwindow):
-        self.soundwindow = SoundWindow(self, data_for_soundwindow)
-        self.soundwindow.Show()
-        self.soundwindow.switch_viewermode()
-    '''
-
     def updatelist(self):
         self.packdatapanel.Hide()
         self.RemoveChild(self.packdatapanel)
