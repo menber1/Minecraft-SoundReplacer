@@ -75,39 +75,31 @@ class PanelBGM(wx.Panel):
 
     def delete_sounddata(self, sounddata):
 
+        self.scrolledwindow.Scroll(0, 0)
+
         if len(self.list_sounddata) == 1:
+            sounddata.Destroy()
             sounddata = SoundDataBGM(
                 self.scrolledwindow, self, self.CATEGORY + '1', (0, 0))
             self.list_sounddata.clear()
             self.list_sounddata.append(sounddata)
+            self.Refresh()
         else:
             for sounddata_ in self.list_sounddata:
+
                 if sounddata_ is sounddata:
                     self.list_sounddata.remove(sounddata)
+                    sounddata.Destroy()
                     break
-
-        self.scrolledwindow.Destroy()
-        self.scrolledwindow = wx.ScrolledWindow(
-            self, -1, style=wx.HSCROLL | wx.VERTICAL, pos=(0, 0), size=(self.WIDTH, self.HEIGHT))
-        i = 0
-        list_sounddata_ = []
-
-        for sounddata_ in self.list_sounddata:
-            title = sounddata_.get_title()
-            sourcepath = sounddata_.get_sourcepath()
-            pos_sounddata = (0, self.HEIGHT_SOUNDDATA * i)
-            sounddata = SoundDataBGM(
-                self.scrolledwindow, self, title, pos_sounddata)
-            sounddata.set_sourcepath(sourcepath)
-            list_sounddata_.append(sounddata)
-            i = i + 1
-
-        count = len(list_sounddata_)
-        totalheight = self.HEIGHT_SOUNDDATA * count
-        self.scrolledwindow.SetScrollbars(
-            0, self.HEIGHT_SOUNDDATA, 0, int(totalheight / self.HEIGHT_SOUNDDATA))
-        self.list_sounddata = list_sounddata_
-        self._switch_plusbutton()
+            count = 0
+            for sounddata_ in self.list_sounddata:
+                sounddata_.SetPosition((0, self.HEIGHT_SOUNDDATA * count))
+                count = count + 1
+            totalheight = len(self.list_sounddata) * self.HEIGHT_SOUNDDATA
+            self.scrolledwindow.SetScrollbars(
+                0, self.HEIGHT_SOUNDDATA, 0, int(totalheight / self.HEIGHT_SOUNDDATA))
+            self._switch_plusbutton()
+            self.Refresh()
 
     def _get_index(self, title):
         index = title.replace(self.CATEGORY, '')

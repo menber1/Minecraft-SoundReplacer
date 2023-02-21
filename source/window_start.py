@@ -6,7 +6,6 @@ import wx
 from source.database_helper import DatabaseHelper
 from source.panel.panel_packdata import PackdataPanel
 from source.window_sound import SoundWindow
-from source.config_manager import ConfigManager
 
 
 class StartWindow(wx.Frame):
@@ -14,10 +13,25 @@ class StartWindow(wx.Frame):
     WIDTH = 1000
     HEIGHT = 550
 
+    '''
+    0.7.2b　変更点 
+    panel_bgmの削除処理を軽負荷に
+    window_start ウィンドウサイズ固定
+    window_sound ウィンドウタイトル
+    window_bundle　ウィンドウサイズ調整
+    configmanager
+    config.ini
+    panel_input
+    
+    
+    '''
+
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.1b', size=(self.WIDTH, self.HEIGHT))
+        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.2b', size=(self.WIDTH, self.HEIGHT))
 
         self.SetBackgroundColour(wx.WHITE)
+        self.SetMinSize((self.WIDTH, self.HEIGHT))# ウィンドウサイズ固定
+        self.SetMaxSize((self.WIDTH, self.HEIGHT))
         icon = wx.Icon('./image/icon_frame.ico')
         self.SetIcon(icon)
         self.soundwindow = None
@@ -27,7 +41,7 @@ class StartWindow(wx.Frame):
         self.button_new = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_plus.png'), pos=(30, 15), size=(16, 16))
         self.button_new.SetBitmapPressed(wx.Bitmap('./image/button_plus_on.png'))
         self.button_new.SetBitmapCurrent(wx.Bitmap('./image/button_plus_hover.png'))
-        self.button_new.SetToolTip('新しいリソースパックを追加')
+        self.button_new.SetToolTip('新しいリソースパックを作成')
         self.button_new.Bind(wx.EVT_BUTTON, self.click_new)
 
         self.button_folder_JE = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(70, 15), size=(16, 16))
@@ -81,6 +95,13 @@ class StartWindow(wx.Frame):
     def show_soundwindow(self, data_for_soundwindow, data_for_panelinput=None):
         self.soundwindow = SoundWindow(self, data_for_soundwindow, data_for_panelinput)
         self.soundwindow.Show()
+
+    '''
+    def show_soundwindow_viewermode(self, data_for_soundwindow):
+        self.soundwindow = SoundWindow(self, data_for_soundwindow)
+        self.soundwindow.Show()
+        self.soundwindow.switch_viewermode()
+    '''
 
     def updatelist(self):
         self.packdatapanel.Hide()

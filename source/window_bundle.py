@@ -1,7 +1,7 @@
 import wx
 
 
-class WindowBundle(wx.Frame):
+class WindowBundle(wx.Dialog):
 
     WIDTH = 850
     HEIGHT = 200
@@ -39,11 +39,11 @@ class WindowBundle(wx.Frame):
         self.panel_bottom = wx.Panel(self, pos=(0,35), size=(self.WIDTH,self.HEIGHT - self.TOOLBAR_HEIGHT))
         self.panel_bottom.SetBackgroundColour(wx.WHITE)
 
-        self.listbox = wx.ListBox(self.panel_bottom, -1, pos=(0, 0), size=(self.WIDTH, self.HEIGHT - self.TOOLBAR_HEIGHT), choices=bundle)
+        self.listbox = wx.ListBox(self.panel_bottom, -1, pos=(0, 0), size=(self.WIDTH-15, self.HEIGHT - self.TOOLBAR_HEIGHT-39), choices=bundle)
 
         self.Bind(wx.EVT_CLOSE, self.close_window)
 
-        self.Show()
+        self.ShowModal()
 
     def click_add(self, event):
         dlg = wx.DirDialog(self, "リソースパックに同梱するフォルダを選択", style=wx.DD_DEFAULT_STYLE)
