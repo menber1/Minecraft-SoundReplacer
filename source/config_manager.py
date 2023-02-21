@@ -1,6 +1,7 @@
 import configparser
 import os
 
+
 class ConfigManager:
 
     def __init__(self):
@@ -20,7 +21,6 @@ class ConfigManager:
         config.read('./config.ini')
         return config.get('export', 'edition')
 
-    # zip
     def set_zip_compression(self, flag):
 
         if flag == True:
@@ -43,7 +43,6 @@ class ConfigManager:
         else:
             return False
 
-
     def get_packformat(self, version):
 
         config = configparser.RawConfigParser()
@@ -56,7 +55,6 @@ class ConfigManager:
             if version_ == version:
                 return int(packformat)
 
-
     def get_select_version(self):
 
         config = configparser.RawConfigParser()
@@ -66,8 +64,6 @@ class ConfigManager:
             return '1.19.3'
         else:
             return version
-
-
 
     def get_versionlist(self):
 
@@ -90,4 +86,3 @@ class ConfigManager:
         config.set('export', 'select_version', version)
         with open('./config.ini', 'w') as file:
             config.write(file)
-

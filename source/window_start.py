@@ -13,24 +13,12 @@ class StartWindow(wx.Frame):
     WIDTH = 1000
     HEIGHT = 550
 
-    '''
-    0.7.2b　変更点 
-    panel_bgmの削除処理を軽負荷に
-    window_start ウィンドウサイズ固定
-    window_sound ウィンドウタイトル
-    window_bundle　ウィンドウサイズ調整
-    configmanager
-    config.ini
-    panel_input
-    
-    
-    '''
-
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.2b', size=(self.WIDTH, self.HEIGHT))
+        wx.Frame.__init__(
+            self, None, -1, 'Minecraft SoundReplacer v0.7.2b', size=(self.WIDTH, self.HEIGHT))
 
         self.SetBackgroundColour(wx.WHITE)
-        self.SetMinSize((self.WIDTH, self.HEIGHT))# ウィンドウサイズ固定
+        self.SetMinSize((self.WIDTH, self.HEIGHT))
         self.SetMaxSize((self.WIDTH, self.HEIGHT))
         icon = wx.Icon('./image/icon_frame.ico')
         self.SetIcon(icon)
@@ -38,28 +26,43 @@ class StartWindow(wx.Frame):
         self.inputwindow = None
         self.packdatapanel = None
 
-        self.button_new = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_plus.png'), pos=(30, 15), size=(16, 16))
-        self.button_new.SetBitmapPressed(wx.Bitmap('./image/button_plus_on.png'))
-        self.button_new.SetBitmapCurrent(wx.Bitmap('./image/button_plus_hover.png'))
+        self.button_new = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_plus.png'), pos=(30, 15), size=(16, 16))
+        self.button_new.SetBitmapPressed(
+            wx.Bitmap('./image/button_plus_on.png'))
+        self.button_new.SetBitmapCurrent(
+            wx.Bitmap('./image/button_plus_hover.png'))
         self.button_new.SetToolTip('新しいリソースパックを作成')
         self.button_new.Bind(wx.EVT_BUTTON, self.click_new)
 
-        self.button_folder_JE = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(70, 15), size=(16, 16))
-        self.button_folder_JE.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
-        self.button_folder_JE.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
-        self.button_folder_JE.SetToolTip('Minecraft JE - .minecraft / resourcepacks')
+        self.button_folder_JE = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(70, 15), size=(16, 16))
+        self.button_folder_JE.SetBitmapPressed(
+            wx.Bitmap('./image/button_folder_on.png'))
+        self.button_folder_JE.SetBitmapCurrent(
+            wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_folder_JE.SetToolTip(
+            'Minecraft JE - .minecraft / resourcepacks')
         self.button_folder_JE.Bind(wx.EVT_BUTTON, self.click_folder_JE)
 
-        self.button_folder_BE = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(110, 15), size=(16, 16))
-        self.button_folder_BE.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
-        self.button_folder_BE.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
-        self.button_folder_BE.SetToolTip('Minecraft BE - com.mojang / resource_packs')
+        self.button_folder_BE = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(110, 15), size=(16, 16))
+        self.button_folder_BE.SetBitmapPressed(
+            wx.Bitmap('./image/button_folder_on.png'))
+        self.button_folder_BE.SetBitmapCurrent(
+            wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_folder_BE.SetToolTip(
+            'Minecraft BE - com.mojang / resource_packs')
         self.button_folder_BE.Bind(wx.EVT_BUTTON, self.click_folder_BE)
 
-        self.button_support = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_door.png'), pos=(910, 15), size=(16, 16))
-        self.button_support.SetBitmapPressed(wx.Bitmap('./image/button_door_on.png'))
-        self.button_support.SetBitmapFocus(wx.Bitmap('./image/button_door_hover.png'))
-        self.button_support.SetToolTip('ウェブサイト：https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
+        self.button_support = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_door.png'), pos=(910, 15), size=(16, 16))
+        self.button_support.SetBitmapPressed(
+            wx.Bitmap('./image/button_door_on.png'))
+        self.button_support.SetBitmapFocus(
+            wx.Bitmap('./image/button_door_hover.png'))
+        self.button_support.SetToolTip(
+            'ウェブサイト：https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
         self.button_support.Bind(wx.EVT_BUTTON, self.click_website)
 
         packdatalist = DatabaseHelper().get_packdatalist()
@@ -72,7 +75,8 @@ class StartWindow(wx.Frame):
 
     def click_folder_BE(self, event):
         username = getpass.getuser()
-        path = '"C:\\Users\\' + username + '\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\resource_packs"'
+        path = '"C:\\Users\\' + username + \
+            '\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\resource_packs"'
         subprocess.run('explorer {}'.format(path))
 
     def click_folder_JE(self, event):
@@ -81,8 +85,8 @@ class StartWindow(wx.Frame):
         subprocess.run('explorer {}'.format(path))
 
     def click_website(self, event):
-        webbrowser.open('https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
-
+        webbrowser.open(
+            'https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
 
     def get_soundwindow(self):
         return self.soundwindow
@@ -93,7 +97,8 @@ class StartWindow(wx.Frame):
             self.soundwindow = None
 
     def show_soundwindow(self, data_for_soundwindow, data_for_panelinput=None):
-        self.soundwindow = SoundWindow(self, data_for_soundwindow, data_for_panelinput)
+        self.soundwindow = SoundWindow(
+            self, data_for_soundwindow, data_for_panelinput)
         self.soundwindow.Show()
 
     '''
@@ -108,4 +113,3 @@ class StartWindow(wx.Frame):
         self.RemoveChild(self.packdatapanel)
         packdatalist = DatabaseHelper().get_packdatalist()
         self.packdatapanel = PackdataPanel(self, packdatalist)
-
