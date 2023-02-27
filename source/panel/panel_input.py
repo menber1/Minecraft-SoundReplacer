@@ -217,7 +217,7 @@ class PanelInput(wx.Panel):
             Message.show(self, 'modules uuid が空欄です。')
             return
 
-        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):
+        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
             Message().show(self, '設定を保存しました。')
             self.soundwindow.get_startwindow().updatelist()
             self.soundwindow.Close()
@@ -247,7 +247,7 @@ class PanelInput(wx.Panel):
         elif self.bundle != []:
             for dir_path in self.bundle:
                 if not os.path.isdir(dir_path):
-                    Message().show(self, '追加フォルダに無効なパス：' + dir_path)
+                    Message().show(self, '同梱するフォルダに無効なパス：' + dir_path)
                     return
 
         edition = self.get_selectedition()
@@ -321,6 +321,8 @@ class PanelInput(wx.Panel):
 
         else:
             shutil.copytree('./temp', savepath_name)
+
+        # エクスポート完了 -------------------------------------------------------------------
 
         Message().show(self, 'リソースパックを作成しました。')
         self.save_database(self.database_index, name, self.icon, description,
@@ -487,8 +489,8 @@ class PanelInput(wx.Panel):
                 Message().show(self, filename + ' が見つかりません。処理を中断します。')
                 return False
 
-        thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(
-            newsourcelist, minecraft_edision))  # progressDialog 非表示のため、第三引数省略。
+        thread_processffmpeg = threading.Thread(
+            target=self.thread_processffmpeg(newsourcelist, minecraft_edision))
         thread_processffmpeg.start()
         thread_processffmpeg.join()
 

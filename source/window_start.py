@@ -3,6 +3,7 @@ import subprocess
 import webbrowser
 
 import wx
+from source.config_manager import ConfigManager
 from source.database_helper import DatabaseHelper
 from source.panel.panel_packdata import PackdataPanel
 from source.window_sound import SoundWindow
@@ -10,16 +11,13 @@ from source.window_sound import SoundWindow
 
 class StartWindow(wx.Frame):
 
-    WIDTH = 1000
-    HEIGHT = 550
-
     def __init__(self):
-        wx.Frame.__init__(
-            self, None, -1, 'Minecraft SoundReplacer v0.7.2b', size=(self.WIDTH, self.HEIGHT))
+        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.3b')
 
         self.SetBackgroundColour(wx.WHITE)
-        self.SetMinSize((self.WIDTH, self.HEIGHT))
-        self.SetMaxSize((self.WIDTH, self.HEIGHT))
+        self.SetSize(ConfigManager().get_size_startwindow())
+        self.SetMinSize((700, 538))
+        self.SetMaxSize((700, 1050))
         icon = wx.Icon('./image/icon_frame.ico')
         self.SetIcon(icon)
         self.soundwindow = None
@@ -68,6 +66,16 @@ class StartWindow(wx.Frame):
         packdatalist = DatabaseHelper().get_packdatalist()
         self.packdatapanel = PackdataPanel(self, packdatalist)
 
+        self.Bind(wx.EVT_CLOSE, self.close_frame)
+        self.Bind(wx.EVT_SIZE, self.resize_frame)
+
+    def close_frame(self, event):
+        ConfigManager().set_size_startwindow(self.GetSize())
+        self.Destroy()
+
+    def resize_frame(self, event):
+        self.packdatapanel.resize()
+
     def click_new(self, event):
         self.destroy_soundwindow()
         self.soundwindow = SoundWindow(self)
@@ -93,6 +101,13 @@ class StartWindow(wx.Frame):
 
     def destroy_soundwindow(self):
         if type(self.soundwindow) == SoundWindow:
+            size = self.soundwindow.GetSize()
+            width = size[0]
+            height = size[1]
+
+            if width >= 1936 and height >= 1056:
+                size = (1000, 525)
+            ConfigManager().set_size_soundwindow(size)
             self.soundwindow.Destroy()
             self.soundwindow = None
 
@@ -100,13 +115,6 @@ class StartWindow(wx.Frame):
         self.soundwindow = SoundWindow(
             self, data_for_soundwindow, data_for_panelinput)
         self.soundwindow.Show()
-
-    '''
-    def show_soundwindow_viewermode(self, data_for_soundwindow):
-        self.soundwindow = SoundWindow(self, data_for_soundwindow)
-        self.soundwindow.Show()
-        self.soundwindow.switch_viewermode()
-    '''
 
     def updatelist(self):
         self.packdatapanel.Hide()

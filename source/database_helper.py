@@ -38,15 +38,15 @@ class DatabaseHelper():
 
         sql = 'INSERT INTO packdata VALUES (?,?,?,?,?,?,?,?,?);'
         data = (None, name, icon, description, header_uuid,
-                modules_uuid, version, records, bundle)  # 20230209
+                modules_uuid, version, records, bundle)
         cursor.execute(sql, data)
         db.commit()
         db.close()
 
-    def update_record(self, index, name, icon, description, header_uuid, modules_uuid, version, records, bundle):  # 20230209
+    def update_record(self, index, name, icon, description, header_uuid, modules_uuid, version, records, bundle):
 
         records = self.convert_cvs_from_list(records)
-        bundle = self.convert_cvs_from_list_bundle(bundle)  # 20230209
+        bundle = self.convert_cvs_from_list_bundle(bundle)
         db = sqlite3.connect(self.PATH_DATABASE)
         cursor = db.cursor()
         cursor.execute('UPDATE packdata SET name=? WHERE id=?', (name, index))
@@ -62,7 +62,7 @@ class DatabaseHelper():
         cursor.execute(
             'UPDATE packdata SET sourcelist=? WHERE id=?', (records, index))
         cursor.execute('UPDATE packdata SET bundle=? WHERE id=?',
-                       (bundle, index))  # 20230209
+                       (bundle, index))
         db.commit()
         db.close()
 
@@ -81,21 +81,21 @@ class DatabaseHelper():
         packdatalist = []
 
         for row in cursor.fetchall():
-
-            # row[0] index
-            # row[1] name
-            # row[2] icon
-            # row[3] description
-            # row[4] header_uuid
-            # row[5] modules_uuid
-            # row[6] version
-            # row[7] sourcelist
-            # row[8] bundle
-
+            '''
+            row[0] index
+            row[1] name
+            row[2] icon
+            row[3] description
+            row[4] header_uuid
+            row[5] modules_uuid
+            row[6] version
+            row[7] sourcelist
+            row[8] bundle
+            '''
             newsourcelist = self.convert_list_from_cvs(row[7])
-            bundlelist = self.convert_list_from_cvs_bundle(row[8])  # 20230209
+            bundlelist = self.convert_list_from_cvs_bundle(row[8])
             packdatalist.append([row[0], row[1], row[2], row[3], row[4],
-                                row[5], row[6], newsourcelist, bundlelist])  # 20230209
+                                row[5], row[6], newsourcelist, bundlelist])
 
         db.close()
         packdatalist.reverse()

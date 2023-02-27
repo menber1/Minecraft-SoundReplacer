@@ -4,32 +4,30 @@ from source.sounddata import SoundData
 
 class PanelSoundData(wx.Panel):
 
-    WIDTH = 974
-    HEIGHT = 435
     HEIGHT_SOUNDDATA = 72
+    WIDTH_OFFSET = 27
+    HEIGHT_OFFSET = 92
 
     def __init__(self, soundwindow, path_oggfiles):
-        wx.Panel.__init__(self, soundwindow, pos=(10, 45),
-                          size=(self.WIDTH, self.HEIGHT))
+        wx.Panel.__init__(self, soundwindow, pos=(10, 45))
 
         self.soundwindow = soundwindow
         self.list_sounddata = []
-
-        scrolledwindow = wx.ScrolledWindow(
-            self, -1, style=wx.HSCROLL | wx.VERTICAL, pos=(0, 0), size=(self.WIDTH, self.HEIGHT))
+        self.scrolledwindow = wx.ScrolledWindow(
+            self, -1, style=wx.HSCROLL | wx.VERTICAL, pos=(0, 0))
+        self.resize()
         i = 0
-
         for path_ogg in path_oggfiles:
             pos_sounddata = (0, self.HEIGHT_SOUNDDATA * i)
-            sounddata = SoundData(scrolledwindow, self,
-                                  path_ogg, pos_sounddata)
+            sounddata = SoundData(self.scrolledwindow,
+                                  self, path_ogg, pos_sounddata)
             self.list_sounddata.append(sounddata)
             i = i + 1
 
         count = len(self.list_sounddata)
         totalheight = self.HEIGHT_SOUNDDATA * count
-        scrolledwindow.SetScrollbars(0, self.HEIGHT_SOUNDDATA, 0, int(
-            totalheight / self.HEIGHT_SOUNDDATA))
+        self.scrolledwindow.SetScrollbars(
+            0, self.HEIGHT_SOUNDDATA, 0, int(totalheight / self.HEIGHT_SOUNDDATA))
 
     def get_newsourcelist(self):
         new_sourcelist = []
@@ -48,3 +46,16 @@ class PanelSoundData(wx.Panel):
     def set_sourcepathlist(self, pathlist):
         for path, sounddata in zip(pathlist, self.list_sounddata):
             sounddata.set_sourcepath(path)
+
+    def resize(self):
+
+        size = self.soundwindow.GetSize()
+        width = size[0] - self.WIDTH_OFFSET
+        height = size[1] - self.HEIGHT_OFFSET
+        self.SetSize((width, height))
+        self.scrolledwindow.SetSize((width, height))
+        wx.CallAfter(self.callafter_sounddatalist_resize)
+
+    def callafter_sounddatalist_resize(self):
+        for sounddata in self.list_sounddata:
+            sounddata.resize()

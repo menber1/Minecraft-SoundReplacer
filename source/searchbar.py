@@ -4,7 +4,7 @@ import wx
 class SearchBar(wx.Panel):
 
     WIDTH = 100
-    HEIGHT = 25
+    HEIGHT = 20
 
     def __init__(self, soundwindow, pos):
         wx.Panel.__init__(self, soundwindow, pos=pos,

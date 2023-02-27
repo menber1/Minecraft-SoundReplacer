@@ -1,6 +1,6 @@
 import os
-
 import wx
+from source.config_manager import ConfigManager
 
 from source.panel.panel_creative import PanelCreative
 from source.panel.panel_end import PanelEnd
@@ -16,18 +16,15 @@ from source.panel.panel_water import PanelWater
 from source.searchbar import SearchBar
 
 
-class SoundWindow(wx.Dialog):
-
-    WIDTH = 1000
-    HEIGHT = 525
+class SoundWindow(wx.Frame):
 
     def __init__(self, startwindow, newsourcelist=None, data_for_panelinput=None):
-        wx.Frame.__init__(self, startwindow, -1,
-                          size=(self.WIDTH, self.HEIGHT))
-
-        self.Bind(wx.EVT_CLOSE, self.close_frame)
+        wx.Frame.__init__(self, startwindow, -1)
 
         self.SetBackgroundColour(wx.WHITE)
+        self.SetSize(ConfigManager().get_size_soundwindow())
+        self.SetMinSize((1000, 525))
+        self.SetMaxSize((1936, 1056))
         icon = wx.Icon('./image/icon_frame.ico')
         self.SetIcon(icon)
         if data_for_panelinput is None:
@@ -55,7 +52,7 @@ class SoundWindow(wx.Dialog):
         self.button_next.SetToolTip('エクスポート画面へ')
         self.button_next.Bind(wx.EVT_BUTTON, self.click_next)
 
-        self.searchbar = SearchBar(self, pos=(855, 10))
+        self.searchbar = SearchBar(self, pos=(850, 13))
 
         self.panel_records = PanelRecords(self)
         self.panel_menu = PanelMenu(self)
@@ -74,8 +71,23 @@ class SoundWindow(wx.Dialog):
         if newsourcelist != None:
             self.newsourcelist_in_panel_sounddata(newsourcelist)
 
+        self.Bind(wx.EVT_CLOSE, self.close_frame)
+        self.Bind(wx.EVT_SIZE, self.resize_frame)
+
     def close_frame(self, event):
         self.startwindow.destroy_soundwindow()
+
+    def resize_frame(self, event):
+        self.panel_records.resize()
+        self.panel_menu.resize()
+        self.panel_game.resize()
+        self.panel_creative.resize()
+        self.panel_end.resize()
+        self.panel_nether.resize()
+        self.panel_water.resize()
+        self.panel_note.resize()
+        self.panel_bgm.resize()
+        self.panel_se.resize()
 
     def select_combobox(self, event):
 
@@ -129,7 +141,8 @@ class SoundWindow(wx.Dialog):
         self.Update()
 
     def get_size(self):
-        return self.WIDTH, self.HEIGHT
+        size = ConfigManager().get_size_soundwindow()
+        return size[0], size[1]
 
     def get_newsourcelist(self):
         all = []

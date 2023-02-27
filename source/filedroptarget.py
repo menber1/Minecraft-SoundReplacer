@@ -10,9 +10,6 @@ class FileDropTarget(wx.FileDropTarget):
 
     def OnDropFiles(self, x, y, pathlist):
 
-        if not self.sounddata.get_flag_drag_and_drop():  # 閲覧モード
-            return
-
         if 1 < len(pathlist):
             for resource in pathlist:
                 if not self.sounddata.check_ext(resource):

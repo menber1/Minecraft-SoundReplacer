@@ -8,7 +8,7 @@ class ConfigManager:
         if not os.path.exists('./config.ini'):
             self.create_configfile()
 
-    # 'JE' or 'BE'
+    # JE or BE --------------------------------------------
     def set_minecraft_edition(self, edition):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
@@ -21,6 +21,7 @@ class ConfigManager:
         config.read('./config.ini')
         return config.get('export', 'edition')
 
+    # zip --------------------------------------------------
     def set_zip_compression(self, flag):
 
         if flag == True:
@@ -43,8 +44,8 @@ class ConfigManager:
         else:
             return False
 
+    # version -----------------------------------------------
     def get_packformat(self, version):
-
         config = configparser.RawConfigParser()
         config.read('./config.ini')
         packformat_csv = config.get('packformat', 'list_packformat')
@@ -55,18 +56,7 @@ class ConfigManager:
             if version_ == version:
                 return int(packformat)
 
-    def get_select_version(self):
-
-        config = configparser.RawConfigParser()
-        config.read('./config.ini')
-        version = config.get('export', 'select_version')
-        if version == '':
-            return '1.19.3'
-        else:
-            return version
-
     def get_versionlist(self):
-
         config = configparser.RawConfigParser()
         config.read('./config.ini')
         packformat_csv = config.get('packformat', 'list_packformat')
@@ -76,13 +66,49 @@ class ConfigManager:
         for ver_and_pack in packformat_list:
             version, packformat = ver_and_pack.split(',')
             versionlist.append(version)
-
         return versionlist
 
-    def set_select_version(self, version):
+    def get_select_version(self):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        version = config.get('export', 'select_version')
+        if version == '':
+            return '1.19.3'
+        else:
+            return version
 
+    def set_select_version(self, version):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
         config.set('export', 'select_version', version)
+        with open('./config.ini', 'w') as file:
+            config.write(file)
+
+    # window size -------------------------------------------
+    def get_size_startwindow(self):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        size = config.get('window', 'size_start')
+        width, height = size.split(',')
+        return (int(width), int(height))
+
+    def set_size_startwindow(self, size):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        config.set('window', 'size_start', str(size[0]) + ',' + str(size[1]))
+        with open('./config.ini', 'w') as file:
+            config.write(file)
+
+    def get_size_soundwindow(self):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        size = config.get('window', 'size_sound')
+        width, height = size.split(',')
+        return (int(width), int(height))
+
+    def set_size_soundwindow(self, size):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        config.set('window', 'size_sound', str(size[0]) + ',' + str(size[1]))
         with open('./config.ini', 'w') as file:
             config.write(file)

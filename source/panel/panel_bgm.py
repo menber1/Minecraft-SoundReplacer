@@ -1,23 +1,25 @@
+import os
 import wx
 from source.sounddata_bgm import SoundDataBGM
 
 
 class PanelBGM(wx.Panel):
 
-    WIDTH = 974
-    HEIGHT = 435
     HEIGHT_SOUNDDATA = 72
+    WIDTH_OFFSET = 27
+    HEIGHT_OFFSET = 92
     CATEGORY = 'bgm.'
 
     def __init__(self, soundwindow):
-        wx.Panel.__init__(self, soundwindow, pos=(10, 45),
-                          size=(self.WIDTH, self.HEIGHT))
+        wx.Panel.__init__(self, soundwindow, pos=(10, 45))
 
+        self.SetBackgroundColour(wx.WHITE)
         self.soundwindow = soundwindow
         self.list_sounddata = []
-
         self.scrolledwindow = wx.ScrolledWindow(
-            self, -1, style=wx.HSCROLL | wx.VERTICAL, pos=(0, 0), size=(self.WIDTH, self.HEIGHT))
+            self, -1, style=wx.HSCROLL | wx.VERTICAL, pos=(0, 0))
+        self.resize()
+
         sounddata = SoundDataBGM(
             self.scrolledwindow, self, self.CATEGORY + '1', (0, 0))
         self.list_sounddata.append(sounddata)
@@ -158,7 +160,10 @@ class PanelBGM(wx.Panel):
             for sounddata in self.list_sounddata:
                 title = sounddata.get_title()
                 title = title[title.index('.') + 1:]
-                if keyword in title:
+
+                basename = os.path.basename(sounddata.get_sourcepath())
+                title_basename = title + '/' + basename
+                if keyword in title_basename:
                     sounddata.show()
                     sounddata.SetPosition((0, posy))
                     posy = posy + self.HEIGHT_SOUNDDATA
@@ -170,3 +175,16 @@ class PanelBGM(wx.Panel):
                 0, self.HEIGHT_SOUNDDATA, 0, int(posy / self.HEIGHT_SOUNDDATA))
 
         self.Refresh()
+
+    def resize(self):
+        size = self.soundwindow.GetSize()
+        width = size[0] - self.WIDTH_OFFSET
+        height = size[1] - self.HEIGHT_OFFSET
+        self.SetSize((width, height))
+        self.scrolledwindow.SetSize((width, height))
+
+        wx.CallAfter(self.callafter_sounddatalist_resize)
+
+    def callafter_sounddatalist_resize(self):
+        for sounddata in self.list_sounddata:
+            sounddata.resize()

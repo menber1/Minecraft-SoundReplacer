@@ -1,21 +1,21 @@
 import wx
 import os
-
 from source.database_helper import DatabaseHelper
 from source.message import Message
 
 
 class PackData(wx.Panel):
 
-    WIDTH = 930
     HEIGHT = 148
     ICON_DEFAULT = './image/pack_icon_default.png'
 
     def __init__(self, scrolledwindow, startwindow, data, pos_):
-        wx.Panel.__init__(self, scrolledwindow, pos=pos_,
-                          size=(self.WIDTH, self.HEIGHT))
+        wx.Panel.__init__(self, scrolledwindow, pos=pos_)
 
         self.startwindow = startwindow
+        self.startwindow.GetSize()[0]
+        width = self.startwindow.GetSize()[0] - 60
+        self.SetSize(width, self.HEIGHT)
         self.index = data[0]
         self.name = data[1]
         self.icon = data[2]
@@ -27,7 +27,7 @@ class PackData(wx.Panel):
         self.bundle = data[8]
 
         self.SetBackgroundColour('WHITE')
-        line = wx.Panel(self, pos=(0, self.HEIGHT - 1), size=(self.WIDTH, 1))
+        line = wx.Panel(self, pos=(0, self.HEIGHT - 1), size=(width, 1))
         line.SetBackgroundColour('#969696')
 
         bmp = self.get_bitmap(self.icon)

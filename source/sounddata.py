@@ -1,31 +1,28 @@
+import wx
 import os
+import csv
 import subprocess
 import webbrowser
-import wx
-import csv
-from source.filedroptarget import FileDropTarget
 from source.message import Message
+from source.filedroptarget import FileDropTarget
 
 
 class SoundData(wx.Panel):
 
-    WIDTH = 945
     HEIGHT = 72
+    WIDTH_OFFSET = 18
 
     def __init__(self, scrollwindow, panel_sounddata, path_ogg, pos_):
-        wx.Panel.__init__(self, scrollwindow, pos=pos_,
-                          size=(self.WIDTH, self.HEIGHT))
+        wx.Panel.__init__(self, scrollwindow, pos=pos_)
 
-        self.SetBackgroundColour('WHITE')
-        line = wx.Panel(self, pos=(15, self.HEIGHT-1),
-                        size=(self.WIDTH - 10, 1))
-        line.SetBackgroundColour('#969696')
+        self.SetBackgroundColour(wx.WHITE)
+        self.line = wx.Panel(self, pos=(15, self.HEIGHT-1))
+        self.line.SetBackgroundColour('#969696')
 
-        self.path_ogg = path_ogg
+        self.path_ogg = path_ogg  # oggfile
         self.path_sourcefile = ''
         self.flag_sound_run = False
         self.panel_sounddata = panel_sounddata
-        self.flag_drag_and_drop = True
 
         path_pngfile = self.panel_sounddata.get_pngfilepath(path_ogg)
         self.icon = wx.StaticBitmap(
@@ -51,7 +48,7 @@ class SoundData(wx.Panel):
         self.button_clear.SetBitmapCurrent(
             wx.Bitmap('./image/button_cancel_hover.png'))
         self.button_clear.SetToolTip('設定消去')
-        self.button_clear.Bind(wx.EVT_BUTTON, self.click_clearbutton)
+        self.button_clear.Bind(wx.EVT_BUTTON, self.click_clear)
 
         self.button_select = wx.BitmapButton(
             self, -1, wx.Bitmap('./image/button_folder.png'), pos=(self.HEIGHT + 60, 40), size=(16, 16))
@@ -60,7 +57,7 @@ class SoundData(wx.Panel):
         self.button_select.SetBitmapCurrent(
             wx.Bitmap('./image/button_folder_hover.png'))
         self.button_select.SetToolTip('フォルダ選択')
-        self.button_select.Bind(wx.EVT_BUTTON, self.click_selectbutton)
+        self.button_select.Bind(wx.EVT_BUTTON, self.click_select)
 
         self.button_run_soundfile = wx.BitmapButton(
             self, -1, wx.Bitmap('./image/button_sound.png'), pos=(self.HEIGHT + 85, 40), size=(16, 16))
@@ -75,10 +72,11 @@ class SoundData(wx.Panel):
         varticalline.SetBackgroundColour('#969696')
 
         path_replacesound = ''
-        self.statictext_replacesound = wx.StaticText(
-            self, -1, path_replacesound, pos=(self.HEIGHT + 140, 10), size=(740, 50))
+        self.textctrl_replacesound = wx.TextCtrl(
+            self, -1, path_replacesound, style=wx.TE_MULTILINE | wx.TE_NO_VSCROLL | wx.TE_READONLY | wx.NO_BORDER)
+        self.resize()
 
-        self.SetDropTarget(FileDropTarget(self, self.statictext_replacesound))
+        self.SetDropTarget(FileDropTarget(self, self.textctrl_replacesound))
 
     def get_oggfilepath(self):
         return self.path_ogg
@@ -91,11 +89,11 @@ class SoundData(wx.Panel):
     def get_pngfilepath(self, path_sourcefile=None):
         return ''
 
-    def click_clearbutton(self, event):
-        self.statictext_replacesound.SetLabel('')
+    def click_clear(self, event):
+        self.textctrl_replacesound.SetLabel('')
         self.path_sourcefile = ''
 
-    def click_selectbutton(self, event):
+    def click_select(self, event):
 
         filter = " All file(*.*) | *.*|" \
                  " WAV (*.wav;*.WAV) | *.wav;*.WAV |" \
@@ -147,36 +145,16 @@ class SoundData(wx.Panel):
         path = '"' + self.path_sourcefile + '"'
         subprocess.run(path, shell=True)
 
-    def split_longpath(self, path):
-
-        if len(path) <= 110:
-            return path
-
-        front = path[0:91]
-        enpos = front.rfind('/')
-        front = path[0:enpos]
-        back = path.replace(front, '')
-
-        if len(back) <= 110:
-            return front + '\n' + back
-
-        mid = back[0:91]
-        enpos = mid.rfind('/')
-        mid = back[0:enpos]
-        back = back.replace(mid, '')
-
-        return front + '\n' + mid + '\n' + back
-
     def set_sourcepath(self, sourcepath):
         self.path_sourcefile = sourcepath
-        sourcepath_ = self.split_longpath(sourcepath)
-        self.statictext_replacesound.SetLabel(sourcepath_)
+        self.textctrl_replacesound.SetLabel(sourcepath)
 
         if os.path.isfile(self.path_sourcefile):
-            self.statictext_replacesound.SetForegroundColour(wx.BLACK)
+            self.textctrl_replacesound.SetForegroundColour(wx.BLACK)
         else:
-            self.statictext_replacesound.SetForegroundColour((130, 130, 130))
-        self.statictext_replacesound.Refresh()
+            self.textctrl_replacesound.SetForegroundColour((130, 130, 130))
+        self.textctrl_replacesound.Refresh()
+        self.resize()
 
     def check_ext(self, path):
         name, ext = os.path.splitext(os.path.basename(path))
@@ -192,8 +170,34 @@ class SoundData(wx.Panel):
     def replace_escape(self, path):
         return path.replace('\\', '/')
 
-    def get_flag_drag_and_drop(self):
-        return self.flag_drag_and_drop
-
     def get_parentpanel(self):
         return self.panel_sounddata
+
+    def resize(self):
+
+        size = self.panel_sounddata.GetSize()
+        self.SetSize((size[0] - self.WIDTH_OFFSET, self.HEIGHT))
+        self.line.SetSize(size[0] - 50, 1)
+
+        # textctrl
+        posx = self.HEIGHT + 140
+        posy = 28
+        width = size[0] - 260
+        height = self.HEIGHT - 43
+        linecount = self.textctrl_replacesound.GetNumberOfLines()
+
+        if linecount <= 1:
+            height = self.HEIGHT - 43
+            posy = 28
+        elif linecount == 2:
+            height = self.HEIGHT - 43
+            posy = 21
+        elif linecount == 3:
+            height = self.HEIGHT - 28
+            posy = 14
+        elif linecount >= 4:
+            height = self.HEIGHT - 13
+            posy = 7
+
+        self.textctrl_replacesound.SetSize((width, height))
+        self.textctrl_replacesound.SetPosition((posx, posy))
