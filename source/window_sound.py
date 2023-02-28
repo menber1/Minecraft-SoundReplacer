@@ -200,7 +200,7 @@ class SoundWindow(wx.Frame):
 
         category, index = os.path.splitext(path_ogg)
 
-        if category == 'bgm' or category == 'se':
+        if category == 'bgm' or category == 'se':  # bgm, seはカテゴリーをoggの代用
             oggdir = category
         else:
             oggdir = os.path.basename(os.path.dirname(path_ogg))

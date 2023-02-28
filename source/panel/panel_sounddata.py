@@ -40,9 +40,6 @@ class PanelSoundData(wx.Panel):
     def get_sounddatalist(self):
         return self.list_sounddata
 
-    def get_pngfilepath(self, path_ogg=None):
-        pass
-
     def set_sourcepathlist(self, pathlist):
         for path, sounddata in zip(pathlist, self.list_sounddata):
             sounddata.set_sourcepath(path)
@@ -54,6 +51,7 @@ class PanelSoundData(wx.Panel):
         height = size[1] - self.HEIGHT_OFFSET
         self.SetSize((width, height))
         self.scrolledwindow.SetSize((width, height))
+
         wx.CallAfter(self.callafter_sounddatalist_resize)
 
     def callafter_sounddatalist_resize(self):

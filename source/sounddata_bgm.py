@@ -4,6 +4,7 @@ import subprocess
 from source.message import Message
 from source.filedroptarget import FileDropTarget
 from source.window_edittitle import EditTitleWindow
+from source.wrap_statictext import WrapStaticText
 
 
 class SoundDataBGM(wx.Panel):
@@ -68,11 +69,11 @@ class SoundDataBGM(wx.Panel):
         varticalline.SetBackgroundColour('#969696')
 
         path_replacesound = ''
-        self.textctrl_replacesound = wx.TextCtrl(
-            self, -1, path_replacesound, style=wx.TE_MULTILINE | wx.TE_NO_VSCROLL | wx.TE_READONLY | wx.NO_BORDER)
+        self.statictext_replacesound = WrapStaticText(
+            self, path_replacesound, pos=(self.HEIGHT + 140, 10))
         self.resize()
 
-        self.SetDropTarget(FileDropTarget(self, self.textctrl_replacesound))
+        self.SetDropTarget(FileDropTarget(self, self.statictext_replacesound))
 
     def mouse_enter_window(self, event):
         label = self.statictext_title.GetLabel()
@@ -127,13 +128,13 @@ class SoundDataBGM(wx.Panel):
 
     def set_sourcepath(self, sourcepath):
         self.path_sourcefile = sourcepath
-        self.textctrl_replacesound.SetLabel(sourcepath)
+        self.statictext_replacesound.set_label(sourcepath)
 
         if os.path.isfile(self.path_sourcefile):
-            self.textctrl_replacesound.SetForegroundColour(wx.BLACK)
+            self.statictext_replacesound.SetForegroundColour(wx.BLACK)
         else:
-            self.textctrl_replacesound.SetForegroundColour((130, 130, 130))
-        self.textctrl_replacesound.Refresh()
+            self.statictext_replacesound.SetForegroundColour((130, 130, 130))
+        self.statictext_replacesound.Refresh()
         self.resize()
 
     def check_ext(self, path):
@@ -189,31 +190,7 @@ class SoundDataBGM(wx.Panel):
         self.Hide()
 
     def resize(self):
-
         size = self.panel_bgm.GetSize()
         self.SetSize((size[0] - self.WIDTH_OFFSET, self.HEIGHT))
         self.line.SetSize(size[0] - 50, 1)
-
-        # textctrl
-        posx = self.HEIGHT + 140
-        posy = 28
-        width = size[0] - 260
-        height = self.HEIGHT - 43
-
-        linecount = self.textctrl_replacesound.GetNumberOfLines()
-
-        if linecount <= 1:
-            height = self.HEIGHT - 43  # 58
-            posy = 28
-        elif linecount == 2:
-            height = self.HEIGHT - 43
-            posy = 21
-        elif linecount == 3:
-            height = self.HEIGHT - 28
-            posy = 14
-        elif linecount >= 4:
-            height = self.HEIGHT - 13
-            posy = 7
-
-        self.textctrl_replacesound.SetSize((width, height))
-        self.textctrl_replacesound.SetPosition((posx, posy))
+        self.statictext_replacesound.resize((size[0], self.HEIGHT))
