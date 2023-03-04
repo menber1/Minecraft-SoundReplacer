@@ -8,7 +8,7 @@ class ConfigManager:
         if not os.path.exists('./config.ini'):
             self.create_configfile()
 
-    # JE or BE --------------------------------------------
+    # 'JE' or 'BE'------------------------------------
     def set_minecraft_edition(self, edition):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
@@ -21,7 +21,7 @@ class ConfigManager:
         config.read('./config.ini')
         return config.get('export', 'edition')
 
-    # zip --------------------------------------------------
+    # zip----------------------------------------------
     def set_zip_compression(self, flag):
 
         if flag == True:
@@ -44,7 +44,7 @@ class ConfigManager:
         else:
             return False
 
-    # version -----------------------------------------------
+    # version-----------------------------------------------
     def get_packformat(self, version):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
@@ -110,5 +110,18 @@ class ConfigManager:
         config = configparser.RawConfigParser()
         config.read('./config.ini')
         config.set('window', 'size_sound', str(size[0]) + ',' + str(size[1]))
+        with open('./config.ini', 'w') as file:
+            config.write(file)
+
+    def get_path_musicfolder(self):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        path = config.get('linkbutton', 'musicfolder')
+        return path
+
+    def set_path_musicfolder(self, path):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini')
+        config.set('linkbutton', 'musicfolder', path)
         with open('./config.ini', 'w') as file:
             config.write(file)

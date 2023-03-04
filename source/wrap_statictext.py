@@ -1,5 +1,9 @@
 import math
+import os
+import subprocess
 import wx
+
+from source.message import Message
 
 
 class WrapStaticText(wx.StaticText):
@@ -15,8 +19,19 @@ class WrapStaticText(wx.StaticText):
 
         self.SetBackgroundColour(wx.WHITE)
         self.font = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                            wx.FONTWEIGHT_NORMAL, False,  "console")
+                            wx.FONTWEIGHT_NORMAL, False, "console")
         self.SetFont(self.font)
+        self.Bind(wx.EVT_LEFT_DCLICK, self.doubleclick)
+
+    def doubleclick(self, event):
+        if self.text == '':
+            return
+        elif os.path.exists(self.text):
+            path = os.path.dirname(self.text)
+            path = os.path.normpath(path)
+            subprocess.Popen(['explorer', path])
+        else:
+            Message().show(self, 'ファイルが見つかりません。再設定してください。')
 
     def resize(self, size):
 
@@ -39,8 +54,8 @@ class WrapStaticText(wx.StaticText):
         lines = []
         margin = 0
         for row in range(1, rowcount + 1):
-            line, startindex, margin, text_widths = self.get_line(
-                self.text, startindex, width, row, text_widths, margin)
+            line, startindex, margin, text_widths = self.get_line(self.text, startindex, width, row, text_widths,
+                                                                  margin)
             lines.append(line)
 
         worpping_text = ''

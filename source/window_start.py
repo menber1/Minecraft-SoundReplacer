@@ -1,4 +1,5 @@
 import getpass
+import os.path
 import subprocess
 import webbrowser
 
@@ -12,7 +13,7 @@ from source.window_sound import SoundWindow
 class StartWindow(wx.Frame):
 
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.3b')
+        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.4b')
 
         self.SetBackgroundColour(wx.WHITE)
         self.SetSize(ConfigManager().get_size_startwindow())
@@ -33,8 +34,19 @@ class StartWindow(wx.Frame):
         self.button_new.SetToolTip('新しいリソースパックを作成')
         self.button_new.Bind(wx.EVT_BUTTON, self.click_new)
 
+        self.button_folder_music = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(70, 15),
+                                                   size=(16, 16))
+        self.button_folder_music.SetBitmapPressed(
+            wx.Bitmap('./image/button_folder_on.png'))
+        self.button_folder_music.SetBitmapCurrent(
+            wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_folder_music.SetToolTip('MusicFolder/右クリックでリンク先変更')
+        self.button_folder_music.Bind(wx.EVT_BUTTON, self.click_folder_music)
+        self.button_folder_music.Bind(
+            wx.EVT_RIGHT_UP, self.rightclick_folder_music)
+
         self.button_folder_JE = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(70, 15), size=(16, 16))
+            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(110, 15), size=(16, 16))
         self.button_folder_JE.SetBitmapPressed(
             wx.Bitmap('./image/button_folder_on.png'))
         self.button_folder_JE.SetBitmapCurrent(
@@ -44,7 +56,7 @@ class StartWindow(wx.Frame):
         self.button_folder_JE.Bind(wx.EVT_BUTTON, self.click_folder_JE)
 
         self.button_folder_BE = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(110, 15), size=(16, 16))
+            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(150, 15), size=(16, 16))
         self.button_folder_BE.SetBitmapPressed(
             wx.Bitmap('./image/button_folder_on.png'))
         self.button_folder_BE.SetBitmapCurrent(
@@ -54,7 +66,7 @@ class StartWindow(wx.Frame):
         self.button_folder_BE.Bind(wx.EVT_BUTTON, self.click_folder_BE)
 
         self.button_support = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_door.png'), pos=(910, 15), size=(16, 16))
+            self, -1, wx.Bitmap('./image/button_door.png'), pos=(640, 15), size=(16, 16))
         self.button_support.SetBitmapPressed(
             wx.Bitmap('./image/button_door_on.png'))
         self.button_support.SetBitmapFocus(
@@ -81,15 +93,32 @@ class StartWindow(wx.Frame):
         self.soundwindow = SoundWindow(self)
         self.soundwindow.Show()
 
-    def click_folder_BE(self, event):
-        username = getpass.getuser()
-        path = '"C:\\Users\\' + username + \
-            '\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\resource_packs"'
+    def click_folder_music(self, event):
+        musicfolder = ConfigManager().get_path_musicfolder()
+        if not os.path.exists(musicfolder):
+            username = getpass.getuser()
+            path = '"C:\\Users\\' + username + '\\Music"'
+        else:
+            path = musicfolder
         subprocess.run('explorer {}'.format(path))
+
+    def rightclick_folder_music(self, event):
+
+        dialog = wx.DirDialog(None, "フォルダを選択してください")
+        if dialog.ShowModal() == wx.ID_OK:
+            folder_path = dialog.GetPath()
+            ConfigManager().set_path_musicfolder(folder_path)
+        dialog.Destroy()
 
     def click_folder_JE(self, event):
         username = getpass.getuser()
         path = '"C:\\Users\\' + username + '\\AppData\\Roaming\\.minecraft\\resourcepacks"'
+        subprocess.run('explorer {}'.format(path))
+
+    def click_folder_BE(self, event):
+        username = getpass.getuser()
+        path = '"C:\\Users\\' + username + \
+            '\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\resource_packs"'
         subprocess.run('explorer {}'.format(path))
 
     def click_website(self, event):
