@@ -1,2 +1,0 @@
-cd cd %~dp0
-pyinstaller C:\...Path to project directory...\minecraft_soundreplacer\minecraft_soundreplacer.py --noconsole --icon=C:\...Path to project directory...\minecraft_soundreplacer\image\icon_frame.ico --clean
