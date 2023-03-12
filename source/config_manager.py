@@ -1,6 +1,8 @@
 import configparser
 import os
 
+import chardet
+
 
 class ConfigManager:
 
@@ -113,15 +115,37 @@ class ConfigManager:
         with open('./config.ini', 'w') as file:
             config.write(file)
 
+    # folder path ---------------------------------------------
+
     def get_path_musicfolder(self):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         path = config.get('linkbutton', 'musicfolder')
         return path
 
     def set_path_musicfolder(self, path):
+        if not os.path.isdir(path):
+            path = ''
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         config.set('linkbutton', 'musicfolder', path)
-        with open('./config.ini', 'w') as file:
+        with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
+
+    def get_path_savefolder(self):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini', 'utf-8')
+        path = config.get('export', 'savefolder')
+        return path
+
+    def set_path_savefolder(self, path):
+        if not os.path.isdir(path):
+            path = ''
+        config = configparser.RawConfigParser()
+        config.read('./config.ini', 'utf-8')
+        config.set('export', 'savefolder', path)
+        with open('./config.ini', 'w', encoding='utf-8') as file:
+            config.write(file)
+
+    
+
