@@ -75,7 +75,8 @@ class ConfigManager:
         config.read('./config.ini')
         version = config.get('export', 'select_version')
         if version == '':
-            return '1.19.3'
+            latest = self.get_versionlist()
+            return latest[-1]
         else:
             return version
 
@@ -147,5 +148,32 @@ class ConfigManager:
         with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
-    
+
+    def create_configfile(self):
+        config = configparser.ConfigParser()
+
+        config['export'] = {
+            'edition': 'JE',
+            'zip_compression': True,
+            'select_version': '1.19.3',
+            'savefolder': '' 
+        }
+
+        config['packformat'] = {
+            'list_packformat': '1.16,6|1.17,7|1.18,8|1.19,9|1.19.3,12|1.19.4,13'
+        }
+
+        config['window'] = {
+            'size_start': '700,538',
+            'size_sound' : '1000,525'
+        }
+
+        config['linkbutton'] = {
+            'musicfolder': ''
+        }
+
+        with open('./config.ini', 'w', encoding='utf-8') as f:
+            config.write(f)
+        
+            
 

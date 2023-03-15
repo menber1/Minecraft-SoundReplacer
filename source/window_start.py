@@ -13,7 +13,7 @@ from source.window_sound import SoundWindow
 class StartWindow(wx.Frame):
 
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.5b')
+        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.7.6b')
         
         self.SetBackgroundColour(wx.WHITE)
         self.SetSize(ConfigManager().get_size_startwindow())
@@ -115,7 +115,7 @@ class StartWindow(wx.Frame):
             width = size[0]
             height = size[1]
 
-            if width >= 1936 and height >= 1056: 
+            if width >= 1936 and height >= 1056: # 最大化で閉じた場合、デフォルトサイズに戻す。 
                 size = (1000, 525)    
             ConfigManager().set_size_soundwindow(size)
             self.soundwindow.Destroy()
