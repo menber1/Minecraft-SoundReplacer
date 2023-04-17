@@ -194,7 +194,7 @@ class PanelInput(wx.Panel):
             Message.show(self, 'modules uuid が空欄です。')
             return
 
-        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
+        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle): 
             Message().show(self, '設定を保存しました。')
             self.soundwindow.get_startwindow().updatelist()
             self.soundwindow.Close()
@@ -231,7 +231,6 @@ class PanelInput(wx.Panel):
         ConfigManager().set_minecraft_edition(edition)
         ConfigManager().set_select_version(self.combobox_version.GetStringSelection())
 
-
         if savepath == '':
             savepath = self.get_desktoppath()
 
@@ -244,14 +243,14 @@ class PanelInput(wx.Panel):
         savepath = savepath.replace('\\', '/')
         resourcepack = ''
 
-        flag_zip = self.checkbox_zip_compression.GetValue()  
+        flag_zip = self.checkbox_zip_compression.GetValue() 
 
         if edition == 'BE' and flag_zip == True:
             resourcepack = os.path.join(savepath, name + '.mcpack')
         elif edition == 'JE' and flag_zip == True:
             resourcepack = os.path.join(savepath, name + '.zip')
         else:
-            resourcepack = os.path.join(savepath, name)  
+            resourcepack = os.path.join(savepath, name) 
 
         resourcepack = resourcepack.replace('\\', '/')
 
@@ -264,7 +263,7 @@ class PanelInput(wx.Panel):
                     shutil.rmtree(resourcepack)
             else:
                 return
-        
+
         if edition == 'BE':
             self.clear_temp()
             self._json_in_blankpack_BE()
@@ -291,7 +290,6 @@ class PanelInput(wx.Panel):
             shutil.make_archive(savepath_name, 'zip', root_dir='./temp')
 
         elif flag_zip == True and edition == 'BE':
-         
             savepath_temp = savepath + '/temp'
             os.mkdir(savepath_temp)
             savepath_temp_name = savepath_temp + '/' + name
@@ -303,7 +301,7 @@ class PanelInput(wx.Panel):
             shutil.copytree('./temp', savepath_name)
 
         Message().show(self, 'リソースパックを作成しました。')
-        self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bandle)  # 20230209
+        self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bandle) 
         self.soundwindow.get_startwindow().updatelist()
         self.soundwindow.Close()
 
@@ -344,7 +342,7 @@ class PanelInput(wx.Panel):
         self.bundle = dirlist
         self.label_bundle.SetLabel("bundle: " + str(len(self.bundle)))
 
-    def save_database(self, index, name, icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
+    def save_database(self, index, name, icon, description, header_uuid, modules_uuid, version, bundle): 
 
         newsourcelist = self.soundwindow.get_newsourcelist()
 
@@ -353,9 +351,9 @@ class PanelInput(wx.Panel):
             return False
 
         if index == -1:
-            DatabaseHelper().insert_record(name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  # 20230209
+            DatabaseHelper().insert_record(name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  
         else:
-            DatabaseHelper().update_record(index, name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  # 20230209
+            DatabaseHelper().update_record(index, name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  
 
         return True
 
@@ -455,7 +453,7 @@ class PanelInput(wx.Panel):
                 Message().show(self, filename + ' が見つかりません。処理を中断します。')
                 return False
 
-        thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(newsourcelist, minecraft_edision))  
+        thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(newsourcelist, minecraft_edision))
         thread_processffmpeg.start()
         thread_processffmpeg.join()
 
@@ -495,7 +493,6 @@ class PanelInput(wx.Panel):
             else:
                 basename = os.path.basename(ogg)
 
-                
                 if basename == 'bass.ogg':
                     basename = 'bassattack.ogg'
 
@@ -503,7 +500,7 @@ class PanelInput(wx.Panel):
 
             above_dir = os.path.basename(os.path.dirname(oggfile))
 
-            if above_dir == 'records' or above_dir == 'note' or above_dir == 'se':  
+            if above_dir == 'records' or above_dir == 'note' or above_dir == 'se':
                 ffmpeg.write_batfile(batfile, newsource, oggfile, mono=True)
             else:
                 ffmpeg.write_batfile(batfile, newsource, oggfile)
@@ -513,7 +510,7 @@ class PanelInput(wx.Panel):
 
     def get_distdir(self, ogg, minecraft_edition):
 
-        bgmlist_record = ['11', '13', '5', 'blocks', 'cat', 'chirp', 'far', 'mall', 'mellohi', 'otherside', 'pigstep_master', 'stal', 'strad', 'wait', 'ward']
+        bgmlist_record = ['11', '13', '5', 'blocks', 'cat', 'chirp', 'far', 'mall', 'mellohi', 'otherside', 'pigstep', 'stal', 'strad', 'wait', 'ward']
         bgmlist_menu = ['menu1', 'menu2', 'menu3', 'menu4']
         bgmlist_game = ['aerie', 'ancestry', 'an_ordinary_day', 'calm1', 'calm2', 'calm3', 'comforting_memories', 'firebugs', 'floating_dream', 'hal1', 'hal2', 'hal3', 'hal4', 'infinite_amethyst',
                         'labyrinthine', 'left_to_bloom', 'nuance1', 'nuance2', 'one_more_day', 'piano1', 'piano2', 'piano3', 'stand_tall', 'wending']
@@ -581,7 +578,7 @@ class PanelInput(wx.Panel):
             elif name in bgmlist_end:
                 return './temp/assets/minecraft/sounds/music/game/end'
 
-            elif name in bgmlist_nether:  
+            elif name in bgmlist_nether:
                 if name == 'chrysopoeia':
                     return './temp/assets/minecraft/sounds/music/game/nether/crimson_forest'
                 elif name == 'rubedo':

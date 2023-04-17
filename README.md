@@ -5,7 +5,7 @@ Minecraft-SoundReplacer
 
 //////////////////////////////////////////////////////////////////////
 
-Version : 0.7.6b
+Version : 0.7.7b
 
 License : GNU GENERAL PUBLIC LICENSE Version 3
  
