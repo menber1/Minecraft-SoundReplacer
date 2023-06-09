@@ -89,12 +89,14 @@ class ConfigManager:
 
     # window size -------------------------------------------
     def get_size_startwindow(self):
-        config = configparser.RawConfigParser()
-        config.read('./config.ini')
-        size = config.get('window', 'size_start')
-        width, height = size.split(',')
-        return (int(width), int(height))
-
+        try:
+            config = configparser.RawConfigParser()
+            config.read('./config.ini')
+            size = config.get('window', 'size_start')
+            width, height = size.split(',')
+            return (int(width), int(height))
+        except UnicodeDecodeError:
+            return int(700), int(538)
     def set_size_startwindow(self, size):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
@@ -148,6 +150,13 @@ class ConfigManager:
         with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
+    def get_musiclist(self, category):
+        config = configparser.RawConfigParser()
+        config.read('./config.ini', 'utf-8')
+        csv = config.get('music', category)
+        musiclist = csv.split(',')
+        return musiclist
+
 
     def create_configfile(self):
         config = configparser.ConfigParser()
@@ -155,12 +164,12 @@ class ConfigManager:
         config['export'] = {
             'edition': 'JE',
             'zip_compression': True,
-            'select_version': '1.19.3',
-            'savefolder': '' 
+            'select_version': '',
+            'savefolder': ''
         }
 
         config['packformat'] = {
-            'list_packformat': '1.16,6|1.17,7|1.18,8|1.19,9|1.19.3,12|1.19.4,13'
+            'list_packformat': '1.16,6|1.17,7|1.18,8|1.19,9|1.19.3,12|1.19.4,13|1.20,15'
         }
 
         config['window'] = {
@@ -170,6 +179,20 @@ class ConfigManager:
 
         config['linkbutton'] = {
             'musicfolder': ''
+        }
+
+        config['music'] = {
+            'record': '11,13,5,blocks,cat,chirp,far,mall,mellohi,otherside,pigstep,relic,stal,strad,wait,ward',
+            'menu': 'menu1,menu2,menu3,menu4',
+            'game': 'a_familiar_room,aerie,ancestry,an_ordinary_day,bromeliad,calm1,calm2,calm3,comforting_memories,'
+                    'crescent_dunes,echo_in_the_wind,firebugs,floating_dream,hal1,hal2,hal3,hal4,infinite_amethyst,'
+                    'labyrinthine,left_to_bloom,nuance1,nuance2,one_more_day,piano1,piano2,piano3,stand_tall,wending',
+            'creative': 'creative1,creative2,creative3,creative4,creative5,creative6',
+            'end': 'boss,credits,end',
+            'nether': 'chrysopoeia,nether1,nether2,nether3,nether4,rubedo,so_below',
+            'water': 'axolotl,dragon_fish,shuniji',
+            'note': 'banjo,bass,bd,bell,bit,cow_bell,didgeridoo,flute,guitar,harp,hat,icechime,iron_xylophone,pling,'
+                    'snare,xylobone'
         }
 
         with open('./config.ini', 'w', encoding='utf-8') as f:

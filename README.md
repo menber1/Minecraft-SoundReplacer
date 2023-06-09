@@ -5,11 +5,11 @@ Minecraft-SoundReplacer
 
 //////////////////////////////////////////////////////////////////////
 
-Version : 0.7.7b
+Version : 0.8b
 
 License : GNU GENERAL PUBLIC LICENSE Version 3
  
-Libraries used : ffmpeg-5.1.2-essentials_build (GPLv3) 
+Libraries used : ffmpeg-6.0-essentials_build (GPLv3) 
 
 FFmpeg source code for the version used : /ffmpeg-snapshot.tar.bz2
 
@@ -25,4 +25,4 @@ doubleclick run_cx_Frezze.py
 
 Generate application "build" Directory 
 
-Running with python 3.10
+Running with python 3.11.4

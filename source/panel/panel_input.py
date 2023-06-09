@@ -4,6 +4,8 @@ import shutil
 import threading
 import wx
 import uuid
+import ctypes
+from ctypes import wintypes
 from PIL import Image
 from source.config_manager import ConfigManager
 from source.database_helper import DatabaseHelper
@@ -194,7 +196,7 @@ class PanelInput(wx.Panel):
             Message.show(self, 'modules uuid が空欄です。')
             return
 
-        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle): 
+        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
             Message().show(self, '設定を保存しました。')
             self.soundwindow.get_startwindow().updatelist()
             self.soundwindow.Close()
@@ -231,6 +233,9 @@ class PanelInput(wx.Panel):
         ConfigManager().set_minecraft_edition(edition)
         ConfigManager().set_select_version(self.combobox_version.GetStringSelection())
 
+
+        # エクスポート先のファイル存在 -------------------------------------------------------
+
         if savepath == '':
             savepath = self.get_desktoppath()
 
@@ -243,14 +248,14 @@ class PanelInput(wx.Panel):
         savepath = savepath.replace('\\', '/')
         resourcepack = ''
 
-        flag_zip = self.checkbox_zip_compression.GetValue() 
+        flag_zip = self.checkbox_zip_compression.GetValue()  # 圧縮指定True zip圧縮処理前に再度取得している。
 
         if edition == 'BE' and flag_zip == True:
             resourcepack = os.path.join(savepath, name + '.mcpack')
         elif edition == 'JE' and flag_zip == True:
             resourcepack = os.path.join(savepath, name + '.zip')
         else:
-            resourcepack = os.path.join(savepath, name) 
+            resourcepack = os.path.join(savepath, name)  # BE JE どちらも拡張子無しのフォルダ名
 
         resourcepack = resourcepack.replace('\\', '/')
 
@@ -264,6 +269,8 @@ class PanelInput(wx.Panel):
             else:
                 return
 
+        # フォルダ構築、json作成、追加フォルダ ------------------------------------------------
+
         if edition == 'BE':
             self.clear_temp()
             self._json_in_blankpack_BE()
@@ -276,12 +283,18 @@ class PanelInput(wx.Panel):
             self._mcmeta_in_blankpack(description)
             self._add_directorys('JE', self.bundle)
 
+        # アイコン生成 -----------------------------------------------------------------------
+
         self._icon_in_blankpack(self.icon, edition)
+
+        # oggファイル生成、格納 --------------------------------------------------------------
 
         if not self._newsource_in_blankpack(edition):
             return
 
-        flag_zip = self.checkbox_zip_compression.GetValue()  
+        # zip圧縮 ---------------------------------------------------------------------------
+
+        flag_zip = self.checkbox_zip_compression.GetValue()  # 圧縮指定がTrue 上書き判定時に一度flag_zipを取得しているが、ここでも取得。
         ConfigManager().set_zip_compression(flag_zip)
 
         savepath_name = savepath + '/' + name
@@ -290,6 +303,10 @@ class PanelInput(wx.Panel):
             shutil.make_archive(savepath_name, 'zip', root_dir='./temp')
 
         elif flag_zip == True and edition == 'BE':
+            '''
+            保存場所に同一名.zipが存在する場合、.mcpackにリネームする前に上書きされてしまう為、
+            tempフォルダを作成し、一旦、.zipを保存、ファイルコピー&リネームで保存先に移す。
+            '''
             savepath_temp = savepath + '/temp'
             os.mkdir(savepath_temp)
             savepath_temp_name = savepath_temp + '/' + name
@@ -300,8 +317,10 @@ class PanelInput(wx.Panel):
         else:
             shutil.copytree('./temp', savepath_name)
 
+        # エクスポート完了 -------------------------------------------------------------------
+
         Message().show(self, 'リソースパックを作成しました。')
-        self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bandle) 
+        self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bandle)  # 20230209
         self.soundwindow.get_startwindow().updatelist()
         self.soundwindow.Close()
 
@@ -323,7 +342,7 @@ class PanelInput(wx.Panel):
         im = Image.open(path)
         width, height = im.size
 
-        if width < height:  
+        if width < height:  # 縦長
             trimsize = int((height - width) / 2)
             im = im.crop((0, trimsize, width, trimsize + width))
 
@@ -342,7 +361,7 @@ class PanelInput(wx.Panel):
         self.bundle = dirlist
         self.label_bundle.SetLabel("bundle: " + str(len(self.bundle)))
 
-    def save_database(self, index, name, icon, description, header_uuid, modules_uuid, version, bundle): 
+    def save_database(self, index, name, icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
 
         newsourcelist = self.soundwindow.get_newsourcelist()
 
@@ -351,42 +370,67 @@ class PanelInput(wx.Panel):
             return False
 
         if index == -1:
-            DatabaseHelper().insert_record(name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  
+            DatabaseHelper().insert_record(name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  # 20230209
         else:
-            DatabaseHelper().update_record(index, name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  
+            DatabaseHelper().update_record(index, name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  # 20230209
 
         return True
 
-    def get_desktoppath(self):  
+    def get_desktoppath(self):
         desktop = os.getenv("HOMEDRIVE") + os.getenv("HOMEPATH") + "/Desktop"
         if os.path.isdir(desktop):
             return desktop
-        else:
-            desktop = os.path.expanduser('~/Desktop')
-            if os.path.isdir(desktop):
-                return desktop
-        return ''  
+
+        desktop = os.path.expanduser('~/Desktop')
+        if os.path.isdir(desktop):
+            return desktop
+
+        CSIDL_DESKTOP = 0x0000
+        SHGFP_TYPE_CURRENT = 0
+        buf = ctypes.create_unicode_buffer(wintypes.MAX_PATH)
+        ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_DESKTOP, None, SHGFP_TYPE_CURRENT, buf)
+        if os.path.isdir(buf.value):
+            return buf.value
+
+        return ''  # desktop path 未取得。
 
     def _json_in_blankpack_BE(self):
+
+        # sound_definitions.json コピー -----------------------------------------------------------------
+
         os.makedirs('./temp/sounds')
         vanilla = VanillaResourcePack()
         sound_definitions_json = vanilla.get_sound_definitions_json()
         dist = os.path.join('./temp', 'sounds', os.path.basename(sound_definitions_json))
         shutil.copyfile(sound_definitions_json, dist)
+
+        # sound_definitions.json 追記 -----------------------------------------------------------------
+
         titlelist = self._get_addtitlelist_definitionsjson()
+
         if not len(titlelist) == 0:
             self._appendblock_definitionsjson(titlelist, dist)
+
+        # sound.json コピー -----------------------------------------------------------------
+
         sounds_json = vanilla.get_sounds_json()
         dist = os.path.join('./temp', os.path.basename(sounds_json))
         shutil.copyfile(sounds_json, dist)
 
     def _json_in_blankpack_JE(self):
+
+        # sound.json コピー -----------------------------------------------------------------
+
         os.makedirs('./temp/assets/minecraft/sounds', exist_ok=True)
         vanilla = VanillaResourcePack()
         sounds_json = vanilla.get_sounds_json_JE()
         dist = os.path.join('./temp/assets/minecraft', os.path.basename(sounds_json))
         shutil.copyfile(sounds_json, dist)
+
+        # sound.json 追記 -----------------------------------------------------------------
+
         titlelist = self._get_addtitlelist_definitionsjson()
+
         if not len(titlelist) == 0:
             self._appendblock_definitionsjson_JE(titlelist, dist)
 
@@ -402,7 +446,7 @@ class PanelInput(wx.Panel):
 
     def _manifest_in_blankpack(self, name, description, header_uuid, modules_uuid, version):
 
-        json_template = './Vanilla_Resource_Pack_1.19.0/manifest.json'
+        json_template = './Vanilla_Resource_Pack_1.20.0/manifest.json'
         json_new = './temp/manifest.json'
 
         version = self.convert_int_version(version)
@@ -439,7 +483,7 @@ class PanelInput(wx.Panel):
         with open(path_pack_mcmeta, 'w') as f:
             json.dump(str_, f, ensure_ascii=False)
 
-    def _newsource_in_blankpack(self, minecraft_edision):
+    def _newsource_in_blankpack(self, minecraft_edition):
 
         newsourcelist = self.soundwindow.get_newsourcelist()
 
@@ -453,7 +497,7 @@ class PanelInput(wx.Panel):
                 Message().show(self, filename + ' が見つかりません。処理を中断します。')
                 return False
 
-        thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(newsourcelist, minecraft_edision))
+        thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(newsourcelist, minecraft_edition))  # progressDialog 非表示のため、第三引数省略。
         thread_processffmpeg.start()
         thread_processffmpeg.join()
 
@@ -493,6 +537,7 @@ class PanelInput(wx.Panel):
             else:
                 basename = os.path.basename(ogg)
 
+                # なぜか音ブロックにbass.oggとbassattack.oggに同じベース音が割り当てられている。bass.oggは使われてないようだ。
                 if basename == 'bass.ogg':
                     basename = 'bassattack.ogg'
 
@@ -500,7 +545,7 @@ class PanelInput(wx.Panel):
 
             above_dir = os.path.basename(os.path.dirname(oggfile))
 
-            if above_dir == 'records' or above_dir == 'note' or above_dir == 'se':
+            if above_dir == 'records' or above_dir == 'note' or above_dir == 'se':  # レコード、音ブロック、効果音のみモノラル変換
                 ffmpeg.write_batfile(batfile, newsource, oggfile, mono=True)
             else:
                 ffmpeg.write_batfile(batfile, newsource, oggfile)
@@ -509,16 +554,15 @@ class PanelInput(wx.Panel):
         ffmpeg.run_batfile()
 
     def get_distdir(self, ogg, minecraft_edition):
-
-        bgmlist_record = ['11', '13', '5', 'blocks', 'cat', 'chirp', 'far', 'mall', 'mellohi', 'otherside', 'pigstep', 'stal', 'strad', 'wait', 'ward']
-        bgmlist_menu = ['menu1', 'menu2', 'menu3', 'menu4']
-        bgmlist_game = ['aerie', 'ancestry', 'an_ordinary_day', 'calm1', 'calm2', 'calm3', 'comforting_memories', 'firebugs', 'floating_dream', 'hal1', 'hal2', 'hal3', 'hal4', 'infinite_amethyst',
-                        'labyrinthine', 'left_to_bloom', 'nuance1', 'nuance2', 'one_more_day', 'piano1', 'piano2', 'piano3', 'stand_tall', 'wending']
-        bgmlist_creative = ['creative1', 'creative2', 'creative3', 'creative4', 'creative5', 'creative6']
-        bgmlist_end = ['boss', 'credits', 'end']
-        bgmlist_nether = ['chrysopoeia', 'nether1', 'nether2', 'nether3', 'nether4', 'rubedo', 'so_below']
-        bgmlist_water = ['axolotl', 'dragon_fish', 'shuniji']
-        bgmlist_note = ['banjo', 'bass', 'bd', 'bell', 'bit', 'cow_bell', 'didgeridoo', 'flute', 'guitar', 'harp', 'hat', 'icechime', 'iron_xylophone', 'pling', 'snare', 'xylobone']
+        cm = ConfigManager()
+        bgmlist_record = cm.get_musiclist('record')
+        bgmlist_menu = cm.get_musiclist('menu')
+        bgmlist_game = cm.get_musiclist('game')
+        bgmlist_creative = cm.get_musiclist('creative')
+        bgmlist_end = cm.get_musiclist('end')
+        bgmlist_nether = cm.get_musiclist('nether')
+        bgmlist_water = cm.get_musiclist('water')
+        bgmlist_note = cm.get_musiclist('note')
 
         category = self._check_originalsound(ogg)
 
@@ -527,6 +571,7 @@ class PanelInput(wx.Panel):
         else:
             name, ext = os.path.splitext(os.path.basename(ogg))
 
+        # BE //////////////////////////////////////////////////
         if minecraft_edition == 'BE':
             if name in bgmlist_record:
                 return './temp/sounds/music/game/records'
@@ -558,6 +603,8 @@ class PanelInput(wx.Panel):
             elif name == 'se':
                 return './temp/sounds/se'
 
+        # JE //////////////////////////////////////////////////
+        # JEでは新曲は階層が違う　sounds.json参照
         elif minecraft_edition == 'JE':
 
             if name in bgmlist_record:

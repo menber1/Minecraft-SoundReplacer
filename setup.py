@@ -15,10 +15,10 @@ setup(
             'packages': ['source'],
             'include_files': ['config.ini',
                               'url.csv',
-                              'Vanilla_Resource_Pack_1.19.0\\',
-                              'Vanilla_Resource_Pack_1.19_JE\\',
+                              'Vanilla_Resource_Pack_1.20.0\\',
+                              'Vanilla_Resource_Pack_1.20_JE\\',
                               'image\\',
-                              'ffmpeg-5.1.2-essentials_build\\']
+                              'ffmpeg-6.0-essentials_build\\']
         }
     }
 )
