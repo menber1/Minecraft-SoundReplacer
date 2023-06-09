@@ -97,6 +97,7 @@ class ConfigManager:
             return (int(width), int(height))
         except UnicodeDecodeError:
             return int(700), int(538)
+
     def set_size_startwindow(self, size):
         config = configparser.RawConfigParser()
         config.read('./config.ini')
@@ -157,7 +158,6 @@ class ConfigManager:
         musiclist = csv.split(',')
         return musiclist
 
-
     def create_configfile(self):
         config = configparser.ConfigParser()
 
@@ -174,7 +174,7 @@ class ConfigManager:
 
         config['window'] = {
             'size_start': '700,538',
-            'size_sound' : '1000,525'
+            'size_sound': '1000,525'
         }
 
         config['linkbutton'] = {
@@ -197,6 +197,3 @@ class ConfigManager:
 
         with open('./config.ini', 'w', encoding='utf-8') as f:
             config.write(f)
-        
-            
-

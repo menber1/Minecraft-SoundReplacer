@@ -33,7 +33,8 @@ class PanelInput(wx.Panel):
     ICON_DEFAULT = './image/pack_icon_default.png'
 
     def __init__(self, soundwindow, database_packdata=None):
-        wx.Panel.__init__(self, soundwindow, pos=(110, 120), size=(self.WIDTH, self.HEIGHT))
+        wx.Panel.__init__(self, soundwindow, pos=(110, 120),
+                          size=(self.WIDTH, self.HEIGHT))
 
         self.SetBackgroundColour(wx.WHITE)
         self.icon = self.ICON_DEFAULT
@@ -41,13 +42,16 @@ class PanelInput(wx.Panel):
         self.database_index = -1
         self.bundle = []
 
-        self.button_icon = wx.BitmapButton(self, -1, wx.Bitmap(self.ICON_DEFAULT), pos=(15, 10), size=(128, 128))
+        self.button_icon = wx.BitmapButton(
+            self, -1, wx.Bitmap(self.ICON_DEFAULT), pos=(15, 10), size=(128, 128))
         self.button_icon.Bind(wx.EVT_BUTTON, self.click_icon)
 
         self.button_clearicon = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_cancel.png'), pos=(15, 145),
                                                 size=(16, 16))
-        self.button_clearicon.SetBitmapPressed(wx.Bitmap('./image/button_cancel_on.png'))
-        self.button_clearicon.SetBitmapCurrent(wx.Bitmap('./image/button_cancel_hover.png'))
+        self.button_clearicon.SetBitmapPressed(
+            wx.Bitmap('./image/button_cancel_on.png'))
+        self.button_clearicon.SetBitmapCurrent(
+            wx.Bitmap('./image/button_cancel_hover.png'))
         self.button_clearicon.SetToolTip('アイコン画像クリア')
         self.button_clearicon.Bind(wx.EVT_BUTTON, self.click_clearicon)
 
@@ -59,48 +63,62 @@ class PanelInput(wx.Panel):
         wx.StaticText(self, -1, 'save folder :', pos=(160, 177))
         wx.StaticText(self, -1, 'version :', pos=(160, 223))
 
-        self.textctrl_name = wx.TextCtrl(self, -1, pos=(250, 10), size=(467, 23))
-        self.textctrl_description = wx.TextCtrl(self, -1, pos=(250, 43), size=(467, 23))
-        self.textctrl_header_uuid = wx.TextCtrl(self, -1, str(uuid.uuid4()), pos=(250, 76), size=(467, 23))
-        self.textctrl_modules_uuid = wx.TextCtrl(self, -1, str(uuid.uuid4()), pos=(250, 109), size=(467, 23))
-        self.textctrl_version = wx.TextCtrl(self, -1, pos=(250, 142), size=(100, 23))
+        self.textctrl_name = wx.TextCtrl(
+            self, -1, pos=(250, 10), size=(467, 23))
+        self.textctrl_description = wx.TextCtrl(
+            self, -1, pos=(250, 43), size=(467, 23))
+        self.textctrl_header_uuid = wx.TextCtrl(
+            self, -1, str(uuid.uuid4()), pos=(250, 76), size=(467, 23))
+        self.textctrl_modules_uuid = wx.TextCtrl(
+            self, -1, str(uuid.uuid4()), pos=(250, 109), size=(467, 23))
+        self.textctrl_version = wx.TextCtrl(
+            self, -1, pos=(250, 142), size=(100, 23))
         self.textctrl_version.SetLabel('0,0,1')
 
-        self.textctrl_save = wx.TextCtrl(self, -1, pos=(250, 175), size=(467, 23))
+        self.textctrl_save = wx.TextCtrl(
+            self, -1, pos=(250, 175), size=(467, 23))
         savepath = ConfigManager().get_path_savefolder()
         if os.path.isdir(savepath):
             self.textctrl_save.SetValue(savepath)
 
         self.button_header_uuid = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_random.png'), pos=(725, 80),
                                                   size=(16, 16))
-        self.button_header_uuid.SetBitmapPressed(wx.Bitmap('./image/button_random_on.png'))
-        self.button_header_uuid.SetBitmapCurrent(wx.Bitmap('./image/button_random_hover.png'))
+        self.button_header_uuid.SetBitmapPressed(
+            wx.Bitmap('./image/button_random_on.png'))
+        self.button_header_uuid.SetBitmapCurrent(
+            wx.Bitmap('./image/button_random_hover.png'))
         self.button_header_uuid.SetToolTip('uuid生成')
         self.button_header_uuid.Bind(wx.EVT_BUTTON, self.click_header_newid)
 
         self.button_modules_uuid = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_random.png'), pos=(725, 113),
                                                    size=(16, 16))
-        self.button_modules_uuid.SetBitmapPressed(wx.Bitmap('./image/button_random_on.png'))
-        self.button_modules_uuid.SetBitmapCurrent(wx.Bitmap('./image/button_random_hover.png'))
+        self.button_modules_uuid.SetBitmapPressed(
+            wx.Bitmap('./image/button_random_on.png'))
+        self.button_modules_uuid.SetBitmapCurrent(
+            wx.Bitmap('./image/button_random_hover.png'))
         self.button_modules_uuid.SetToolTip('uuid生成')
         self.button_modules_uuid.Bind(wx.EVT_BUTTON, self.click_modules_newid)
 
         self.button_reference = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(725, 179),
                                                 size=(16, 16))
-        self.button_reference.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
-        self.button_reference.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_reference.SetBitmapPressed(
+            wx.Bitmap('./image/button_folder_on.png'))
+        self.button_reference.SetBitmapCurrent(
+            wx.Bitmap('./image/button_folder_hover.png'))
         self.button_reference.SetToolTip('保存先フォルダ選択')
         self.button_reference.Bind(wx.EVT_BUTTON, self.click_reference)
 
         versionlist = ConfigManager().get_versionlist()
-        self.combobox_version = wx.ComboBox(self, -1, choices=versionlist, style=wx.CB_READONLY, size=(60, 23), pos=(215, 220))
+        self.combobox_version = wx.ComboBox(
+            self, -1, choices=versionlist, style=wx.CB_READONLY, size=(60, 23), pos=(215, 220))
         v = ConfigManager().get_select_version()
         self.combobox_version.SetStringSelection(v)
 
         self.radiobutton_JE = wx.RadioButton(self, -1, 'JE', pos=(300, 225))
         self.radiobutton_BE = wx.RadioButton(self, -1, 'BE', pos=(340, 225))
 
-        self.checkbox_zip_compression = wx.CheckBox(self, -1, 'ZIP', pos=(390, 225))
+        self.checkbox_zip_compression = wx.CheckBox(
+            self, -1, 'ZIP', pos=(390, 225))
         if ConfigManager().get_zip_compression():
             self.checkbox_zip_compression.SetValue(True)
         else:
@@ -113,23 +131,28 @@ class PanelInput(wx.Panel):
         elif edition == 'BE':
             self.radiobutton_BE.SetValue(True)
 
-        self.label_bundle = wx.StaticText(self, -1, 'bundle : 0', pos=(440, 225))
+        self.label_bundle = wx.StaticText(
+            self, -1, 'bundle : 0', pos=(440, 225))
 
-        self.button_bundle = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(505, 225), size=(16, 16))
-        self.button_bundle.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
-        self.button_bundle.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_bundle = wx.BitmapButton(
+            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(505, 225), size=(16, 16))
+        self.button_bundle.SetBitmapPressed(
+            wx.Bitmap('./image/button_folder_on.png'))
+        self.button_bundle.SetBitmapCurrent(
+            wx.Bitmap('./image/button_folder_hover.png'))
         self.button_bundle.SetToolTip('リソースパックに同梱するフォルダを選択')
         self.button_bundle.Bind(wx.EVT_BUTTON, self.click_bundle)
 
-        self.button_save = wx.Button(self, -1, 'save', pos=(550, 220), size=(80, 25))
+        self.button_save = wx.Button(
+            self, -1, 'save', pos=(550, 220), size=(80, 25))
         self.button_save.Bind(wx.EVT_BUTTON, self.click_save)
 
-        self.button_export = wx.Button(self, -1, 'export', pos=(640, 220), size=(80, 25))
+        self.button_export = wx.Button(
+            self, -1, 'export', pos=(640, 220), size=(80, 25))
         self.button_export.Bind(wx.EVT_BUTTON, self.click_export)
 
         self.SetDropTarget(ImageDropTarget(self))
         self.set_packdata(database_packdata)
-
 
     def click_icon(self, event):
         with wx.FileDialog(self.button_icon, '画像ファイルを指定してください。') as dialog:
@@ -158,7 +181,8 @@ class PanelInput(wx.Panel):
         self.textctrl_modules_uuid.SetLabel(id_)
 
     def click_reference(self, event):
-        dialog = wx.DirDialog(self, style=wx.DD_DEFAULT_STYLE, message=".mcpackの保存先フォルダを選択")
+        dialog = wx.DirDialog(self, style=wx.DD_DEFAULT_STYLE,
+                              message=".mcpackの保存先フォルダを選択")
         ans = dialog.ShowModal()
         if ans == wx.ID_OK:
             self.textctrl_save.SetLabel(dialog.GetPath())
@@ -233,9 +257,6 @@ class PanelInput(wx.Panel):
         ConfigManager().set_minecraft_edition(edition)
         ConfigManager().set_select_version(self.combobox_version.GetStringSelection())
 
-
-        # エクスポート先のファイル存在 -------------------------------------------------------
-
         if savepath == '':
             savepath = self.get_desktoppath()
 
@@ -248,14 +269,14 @@ class PanelInput(wx.Panel):
         savepath = savepath.replace('\\', '/')
         resourcepack = ''
 
-        flag_zip = self.checkbox_zip_compression.GetValue()  # 圧縮指定True zip圧縮処理前に再度取得している。
+        flag_zip = self.checkbox_zip_compression.GetValue()
 
         if edition == 'BE' and flag_zip == True:
             resourcepack = os.path.join(savepath, name + '.mcpack')
         elif edition == 'JE' and flag_zip == True:
             resourcepack = os.path.join(savepath, name + '.zip')
         else:
-            resourcepack = os.path.join(savepath, name)  # BE JE どちらも拡張子無しのフォルダ名
+            resourcepack = os.path.join(savepath, name)
 
         resourcepack = resourcepack.replace('\\', '/')
 
@@ -269,12 +290,11 @@ class PanelInput(wx.Panel):
             else:
                 return
 
-        # フォルダ構築、json作成、追加フォルダ ------------------------------------------------
-
         if edition == 'BE':
             self.clear_temp()
             self._json_in_blankpack_BE()
-            self._manifest_in_blankpack(name, description, header_uuid, modules_uuid, version)
+            self._manifest_in_blankpack(
+                name, description, header_uuid, modules_uuid, version)
             self._add_directorys('BE', self.bundle)
 
         elif edition == 'JE':
@@ -283,18 +303,12 @@ class PanelInput(wx.Panel):
             self._mcmeta_in_blankpack(description)
             self._add_directorys('JE', self.bundle)
 
-        # アイコン生成 -----------------------------------------------------------------------
-
         self._icon_in_blankpack(self.icon, edition)
-
-        # oggファイル生成、格納 --------------------------------------------------------------
 
         if not self._newsource_in_blankpack(edition):
             return
 
-        # zip圧縮 ---------------------------------------------------------------------------
-
-        flag_zip = self.checkbox_zip_compression.GetValue()  # 圧縮指定がTrue 上書き判定時に一度flag_zipを取得しているが、ここでも取得。
+        flag_zip = self.checkbox_zip_compression.GetValue()
         ConfigManager().set_zip_compression(flag_zip)
 
         savepath_name = savepath + '/' + name
@@ -303,10 +317,7 @@ class PanelInput(wx.Panel):
             shutil.make_archive(savepath_name, 'zip', root_dir='./temp')
 
         elif flag_zip == True and edition == 'BE':
-            '''
-            保存場所に同一名.zipが存在する場合、.mcpackにリネームする前に上書きされてしまう為、
-            tempフォルダを作成し、一旦、.zipを保存、ファイルコピー&リネームで保存先に移す。
-            '''
+
             savepath_temp = savepath + '/temp'
             os.mkdir(savepath_temp)
             savepath_temp_name = savepath_temp + '/' + name
@@ -317,10 +328,9 @@ class PanelInput(wx.Panel):
         else:
             shutil.copytree('./temp', savepath_name)
 
-        # エクスポート完了 -------------------------------------------------------------------
-
         Message().show(self, 'リソースパックを作成しました。')
-        self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bandle)  # 20230209
+        self.save_database(self.database_index, name, self.icon, description,
+                           header_uuid, modules_uuid, version, bandle)  # 20230209
         self.soundwindow.get_startwindow().updatelist()
         self.soundwindow.Close()
 
@@ -342,7 +352,7 @@ class PanelInput(wx.Panel):
         im = Image.open(path)
         width, height = im.size
 
-        if width < height:  # 縦長
+        if width < height:
             trimsize = int((height - width) / 2)
             im = im.crop((0, trimsize, width, trimsize + width))
 
@@ -370,9 +380,11 @@ class PanelInput(wx.Panel):
             return False
 
         if index == -1:
-            DatabaseHelper().insert_record(name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  # 20230209
+            DatabaseHelper().insert_record(name, icon, description, header_uuid,
+                                           modules_uuid, version, newsourcelist, bundle)
         else:
-            DatabaseHelper().update_record(index, name, icon, description, header_uuid, modules_uuid, version, newsourcelist, bundle)  # 20230209
+            DatabaseHelper().update_record(index, name, icon, description,
+                                           header_uuid, modules_uuid, version, newsourcelist, bundle)
 
         return True
 
@@ -388,30 +400,26 @@ class PanelInput(wx.Panel):
         CSIDL_DESKTOP = 0x0000
         SHGFP_TYPE_CURRENT = 0
         buf = ctypes.create_unicode_buffer(wintypes.MAX_PATH)
-        ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_DESKTOP, None, SHGFP_TYPE_CURRENT, buf)
+        ctypes.windll.shell32.SHGetFolderPathW(
+            None, CSIDL_DESKTOP, None, SHGFP_TYPE_CURRENT, buf)
         if os.path.isdir(buf.value):
             return buf.value
 
-        return ''  # desktop path 未取得。
+        return ''
 
     def _json_in_blankpack_BE(self):
-
-        # sound_definitions.json コピー -----------------------------------------------------------------
 
         os.makedirs('./temp/sounds')
         vanilla = VanillaResourcePack()
         sound_definitions_json = vanilla.get_sound_definitions_json()
-        dist = os.path.join('./temp', 'sounds', os.path.basename(sound_definitions_json))
+        dist = os.path.join('./temp', 'sounds',
+                            os.path.basename(sound_definitions_json))
         shutil.copyfile(sound_definitions_json, dist)
-
-        # sound_definitions.json 追記 -----------------------------------------------------------------
 
         titlelist = self._get_addtitlelist_definitionsjson()
 
         if not len(titlelist) == 0:
             self._appendblock_definitionsjson(titlelist, dist)
-
-        # sound.json コピー -----------------------------------------------------------------
 
         sounds_json = vanilla.get_sounds_json()
         dist = os.path.join('./temp', os.path.basename(sounds_json))
@@ -419,15 +427,12 @@ class PanelInput(wx.Panel):
 
     def _json_in_blankpack_JE(self):
 
-        # sound.json コピー -----------------------------------------------------------------
-
         os.makedirs('./temp/assets/minecraft/sounds', exist_ok=True)
         vanilla = VanillaResourcePack()
         sounds_json = vanilla.get_sounds_json_JE()
-        dist = os.path.join('./temp/assets/minecraft', os.path.basename(sounds_json))
+        dist = os.path.join('./temp/assets/minecraft',
+                            os.path.basename(sounds_json))
         shutil.copyfile(sounds_json, dist)
-
-        # sound.json 追記 -----------------------------------------------------------------
 
         titlelist = self._get_addtitlelist_definitionsjson()
 
@@ -497,8 +502,8 @@ class PanelInput(wx.Panel):
                 Message().show(self, filename + ' が見つかりません。処理を中断します。')
                 return False
 
-        thread_processffmpeg = threading.Thread(target=self.thread_processffmpeg(newsourcelist, minecraft_edition))  # progressDialog 非表示のため、第三引数省略。
-        thread_processffmpeg.start()
+        thread_processffmpeg = threading.Thread(
+            target=self.thread_processffmpeg(newsourcelist, minecraft_edition))
         thread_processffmpeg.join()
 
         print('complate thread process ffmpeg !')
@@ -507,9 +512,11 @@ class PanelInput(wx.Panel):
     def _add_directorys(self, edition, dirlist):
         for dir_x in dirlist:
             if edition == 'JE':
-                shutil.copytree(dir_x, os.path.join('./temp/assets/minecraft', os.path.basename(dir_x)))
+                shutil.copytree(dir_x, os.path.join(
+                    './temp/assets/minecraft', os.path.basename(dir_x)))
             elif edition == 'BE':
-                shutil.copytree(dir_x, os.path.join('./temp', os.path.basename(dir_x)))
+                shutil.copytree(dir_x, os.path.join(
+                    './temp', os.path.basename(dir_x)))
 
     def convert_int_version(self, version):
 
@@ -537,7 +544,6 @@ class PanelInput(wx.Panel):
             else:
                 basename = os.path.basename(ogg)
 
-                # なぜか音ブロックにbass.oggとbassattack.oggに同じベース音が割り当てられている。bass.oggは使われてないようだ。
                 if basename == 'bass.ogg':
                     basename = 'bassattack.ogg'
 
@@ -545,7 +551,7 @@ class PanelInput(wx.Panel):
 
             above_dir = os.path.basename(os.path.dirname(oggfile))
 
-            if above_dir == 'records' or above_dir == 'note' or above_dir == 'se':  # レコード、音ブロック、効果音のみモノラル変換
+            if above_dir == 'records' or above_dir == 'note' or above_dir == 'se':
                 ffmpeg.write_batfile(batfile, newsource, oggfile, mono=True)
             else:
                 ffmpeg.write_batfile(batfile, newsource, oggfile)
@@ -571,7 +577,6 @@ class PanelInput(wx.Panel):
         else:
             name, ext = os.path.splitext(os.path.basename(ogg))
 
-        # BE //////////////////////////////////////////////////
         if minecraft_edition == 'BE':
             if name in bgmlist_record:
                 return './temp/sounds/music/game/records'
@@ -603,8 +608,6 @@ class PanelInput(wx.Panel):
             elif name == 'se':
                 return './temp/sounds/se'
 
-        # JE //////////////////////////////////////////////////
-        # JEでは新曲は階層が違う　sounds.json参照
         elif minecraft_edition == 'JE':
 
             if name in bgmlist_record:
@@ -658,7 +661,8 @@ class PanelInput(wx.Panel):
         return name
 
     def set_packdata(self, packdata):
-        if packdata == None: return
+        if packdata == None:
+            return
         self.database_index = packdata[0]
         self.textctrl_name.SetLabel(packdata[1])
         self.set_bitmap(packdata[2])
