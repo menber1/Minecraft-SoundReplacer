@@ -13,8 +13,8 @@ from source.window_sound import SoundWindow
 class StartWindow(wx.Frame):
 
     def __init__(self):
-        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.8b')
-
+        wx.Frame.__init__(self, None, -1, 'Minecraft SoundReplacer v0.8.2b')
+        
         self.SetBackgroundColour(wx.WHITE)
         self.SetSize(ConfigManager().get_size_startwindow())
         self.SetMinSize((700, 538))
@@ -25,54 +25,36 @@ class StartWindow(wx.Frame):
         self.inputwindow = None
         self.packdatapanel = None
 
-        self.button_new = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_plus.png'), pos=(30, 15), size=(16, 16))
-        self.button_new.SetBitmapPressed(
-            wx.Bitmap('./image/button_plus_on.png'))
-        self.button_new.SetBitmapCurrent(
-            wx.Bitmap('./image/button_plus_hover.png'))
+        self.button_new = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_plus.png'), pos=(30, 15), size=(16, 16))
+        self.button_new.SetBitmapPressed(wx.Bitmap('./image/button_plus_on.png'))
+        self.button_new.SetBitmapCurrent(wx.Bitmap('./image/button_plus_hover.png'))
         self.button_new.SetToolTip('新しいリソースパックを作成')
         self.button_new.Bind(wx.EVT_BUTTON, self.click_new)
 
         self.button_folder_music = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(70, 15),
                                                    size=(16, 16))
-        self.button_folder_music.SetBitmapPressed(
-            wx.Bitmap('./image/button_folder_on.png'))
-        self.button_folder_music.SetBitmapCurrent(
-            wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_folder_music.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
+        self.button_folder_music.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
         self.button_folder_music.SetToolTip('MusicFolder/右クリックでリンク先変更')
         self.button_folder_music.Bind(wx.EVT_BUTTON, self.click_folder_music)
-        self.button_folder_music.Bind(
-            wx.EVT_RIGHT_UP, self.rightclick_folder_music)
+        self.button_folder_music.Bind(wx.EVT_RIGHT_UP, self.rightclick_folder_music)
 
-        self.button_folder_JE = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(110, 15), size=(16, 16))
-        self.button_folder_JE.SetBitmapPressed(
-            wx.Bitmap('./image/button_folder_on.png'))
-        self.button_folder_JE.SetBitmapCurrent(
-            wx.Bitmap('./image/button_folder_hover.png'))
-        self.button_folder_JE.SetToolTip(
-            'Minecraft JE - .minecraft / resourcepacks')
+        self.button_folder_JE = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(110, 15), size=(16, 16))
+        self.button_folder_JE.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
+        self.button_folder_JE.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_folder_JE.SetToolTip('Minecraft JE - .minecraft / resourcepacks')
         self.button_folder_JE.Bind(wx.EVT_BUTTON, self.click_folder_JE)
 
-        self.button_folder_BE = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(150, 15), size=(16, 16))
-        self.button_folder_BE.SetBitmapPressed(
-            wx.Bitmap('./image/button_folder_on.png'))
-        self.button_folder_BE.SetBitmapCurrent(
-            wx.Bitmap('./image/button_folder_hover.png'))
-        self.button_folder_BE.SetToolTip(
-            'Minecraft BE - com.mojang / resource_packs')
+        self.button_folder_BE = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(150, 15), size=(16, 16))
+        self.button_folder_BE.SetBitmapPressed(wx.Bitmap('./image/button_folder_on.png'))
+        self.button_folder_BE.SetBitmapCurrent(wx.Bitmap('./image/button_folder_hover.png'))
+        self.button_folder_BE.SetToolTip('Minecraft BE - com.mojang / resource_packs')
         self.button_folder_BE.Bind(wx.EVT_BUTTON, self.click_folder_BE)
 
-        self.button_support = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_door.png'), pos=(640, 15), size=(16, 16))
-        self.button_support.SetBitmapPressed(
-            wx.Bitmap('./image/button_door_on.png'))
-        self.button_support.SetBitmapFocus(
-            wx.Bitmap('./image/button_door_hover.png'))
-        self.button_support.SetToolTip(
-            'ウェブサイト：https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
+        self.button_support = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_door.png'), pos=(640, 15), size=(16, 16))
+        self.button_support.SetBitmapPressed(wx.Bitmap('./image/button_door_on.png'))
+        self.button_support.SetBitmapFocus(wx.Bitmap('./image/button_door_hover.png'))
+        self.button_support.SetToolTip('ウェブサイト：https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
         self.button_support.Bind(wx.EVT_BUTTON, self.click_website)
 
         packdatalist = DatabaseHelper().get_packdatalist()
@@ -117,13 +99,12 @@ class StartWindow(wx.Frame):
 
     def click_folder_BE(self, event):
         username = getpass.getuser()
-        path = '"C:\\Users\\' + username + \
-            '\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\resource_packs"'
+        path = '"C:\\Users\\' + username + '\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\resource_packs"'
         subprocess.run('explorer {}'.format(path))
 
     def click_website(self, event):
-        webbrowser.open(
-            'https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
+        webbrowser.open('https://sites.google.com/view/kusunoki-games/minecraft-soundreplacer')
+
 
     def get_soundwindow(self):
         return self.soundwindow
@@ -134,15 +115,14 @@ class StartWindow(wx.Frame):
             width = size[0]
             height = size[1]
 
-            if width >= 1936 and height >= 1056:
-                size = (1000, 525)
+            if width >= 1936 and height >= 1056: # 最大化で閉じた場合、デフォルトサイズに戻す。 
+                size = (1000, 525)    
             ConfigManager().set_size_soundwindow(size)
             self.soundwindow.Destroy()
             self.soundwindow = None
 
     def show_soundwindow(self, data_for_soundwindow, data_for_panelinput=None):
-        self.soundwindow = SoundWindow(
-            self, data_for_soundwindow, data_for_panelinput)
+        self.soundwindow = SoundWindow(self, data_for_soundwindow, data_for_panelinput)
         self.soundwindow.Show()
 
     def updatelist(self):
@@ -150,3 +130,6 @@ class StartWindow(wx.Frame):
         self.RemoveChild(self.packdatapanel)
         packdatalist = DatabaseHelper().get_packdatalist()
         self.packdatapanel = PackdataPanel(self, packdatalist)
+
+
+
