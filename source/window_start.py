@@ -115,7 +115,7 @@ class StartWindow(wx.Frame):
             width = size[0]
             height = size[1]
 
-            if width >= 1936 and height >= 1056: # 最大化で閉じた場合、デフォルトサイズに戻す。 
+            if width >= 1936 and height >= 1056:
                 size = (1000, 525)    
             ConfigManager().set_size_soundwindow(size)
             self.soundwindow.Destroy()

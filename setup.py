@@ -13,8 +13,7 @@ setup(
         'build_exe': {
             'build_exe': 'build\\minecraft_soundreplacer',
             'packages': ['source'],
-            'include_files': ['config.ini',
-                              'url.csv',
+            'include_files': ['url.csv',
                               'Vanilla_Resource_Pack_1.20.0\\',
                               'Vanilla_Resource_Pack_1.20_JE\\',
                               'image\\',
