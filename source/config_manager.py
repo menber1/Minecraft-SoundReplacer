@@ -13,14 +13,14 @@ class ConfigManager:
     # 'JE' or 'BE'------------------------------------
     def set_minecraft_edition(self, edition):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         config.set('export', 'edition', edition)
-        with open('./config.ini', 'w') as file:
+        with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
     def get_minecraft_edition(self):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         return config.get('export', 'edition')
 
     # zip----------------------------------------------
@@ -32,14 +32,14 @@ class ConfigManager:
             flag = 'False'
 
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         config.set('export', 'zip_compression', flag)
-        with open('./config.ini', 'w') as file:
+        with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
     def get_zip_compression(self):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         flag = config.get('export', 'zip_compression')
         if flag == 'True':
             return True
@@ -49,7 +49,7 @@ class ConfigManager:
     # version-----------------------------------------------
     def get_packformat(self, version):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         packformat_csv = config.get('packformat', 'list_packformat')
         packformat_list = packformat_csv.split('|')
 
@@ -60,7 +60,7 @@ class ConfigManager:
 
     def get_versionlist(self):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         packformat_csv = config.get('packformat', 'list_packformat')
         packformat_list = packformat_csv.split('|')
 
@@ -72,7 +72,7 @@ class ConfigManager:
 
     def get_select_version(self):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         version = config.get('export', 'select_version')
         if version == '':
             latest = self.get_versionlist()
@@ -82,16 +82,16 @@ class ConfigManager:
 
     def set_select_version(self, version):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         config.set('export', 'select_version', version)
-        with open('./config.ini', 'w') as file:
+        with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
     # window size -------------------------------------------
     def get_size_startwindow(self):
         try:
             config = configparser.RawConfigParser()
-            config.read('./config.ini')
+            config.read('./config.ini', 'utf-8')
             size = config.get('window', 'size_start')
             width, height = size.split(',')
             return (int(width), int(height))
@@ -99,23 +99,23 @@ class ConfigManager:
             return int(700), int(538)
     def set_size_startwindow(self, size):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         config.set('window', 'size_start', str(size[0]) + ',' + str(size[1]))
-        with open('./config.ini', 'w') as file:
+        with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
     def get_size_soundwindow(self):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         size = config.get('window', 'size_sound')
         width, height = size.split(',')
         return (int(width), int(height))
 
     def set_size_soundwindow(self, size):
         config = configparser.RawConfigParser()
-        config.read('./config.ini')
+        config.read('./config.ini', 'utf-8')
         config.set('window', 'size_sound', str(size[0]) + ',' + str(size[1]))
-        with open('./config.ini', 'w') as file:
+        with open('./config.ini', 'w', encoding='utf-8') as file:
             config.write(file)
 
     # folder path ---------------------------------------------
