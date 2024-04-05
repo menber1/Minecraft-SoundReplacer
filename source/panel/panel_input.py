@@ -5,6 +5,7 @@ import threading
 import wx
 import uuid
 import ctypes
+import logging
 from ctypes import wintypes
 from PIL import Image
 from source.config_manager import ConfigManager
@@ -36,6 +37,7 @@ class PanelInput(wx.Panel):
         wx.Panel.__init__(self, soundwindow, pos=(110, 120),
                           size=(self.WIDTH, self.HEIGHT))
 
+        self._set_logging()
         self.SetBackgroundColour(wx.WHITE)
         self.icon = self.ICON_DEFAULT
         self.soundwindow = soundwindow
@@ -109,8 +111,8 @@ class PanelInput(wx.Panel):
         self.button_reference.Bind(wx.EVT_BUTTON, self.click_reference)
 
         versionlist = ConfigManager().get_versionlist()
-        self.combobox_version = wx.ComboBox(
-            self, -1, choices=versionlist, style=wx.CB_READONLY, size=(60, 23), pos=(215, 220))
+        self.combobox_version = wx.ComboBox(self, -1, choices=versionlist, style=wx.CB_READONLY, size=(60, 23),
+                                            pos=(215, 220))
         v = ConfigManager().get_select_version()
         self.combobox_version.SetStringSelection(v)
 
@@ -134,8 +136,8 @@ class PanelInput(wx.Panel):
         self.label_bundle = wx.StaticText(
             self, -1, 'bundle : 0', pos=(440, 225))
 
-        self.button_bundle = wx.BitmapButton(
-            self, -1, wx.Bitmap('./image/button_folder.png'), pos=(505, 225), size=(16, 16))
+        self.button_bundle = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(505, 225),
+                                             size=(16, 16))
         self.button_bundle.SetBitmapPressed(
             wx.Bitmap('./image/button_folder_on.png'))
         self.button_bundle.SetBitmapCurrent(
@@ -220,119 +222,137 @@ class PanelInput(wx.Panel):
             Message.show(self, 'modules uuid が空欄です。')
             return
 
-        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
+        if self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version,
+                              bundle):
             Message().show(self, '設定を保存しました。')
             self.soundwindow.get_startwindow().updatelist()
             self.soundwindow.Close()
 
     def click_export(self, event):
+        try:
+            name = self.textctrl_name.GetValue()
+            description = self.textctrl_description.GetValue()
+            header_uuid = self.textctrl_header_uuid.GetValue()
+            modules_uuid = self.textctrl_modules_uuid.GetValue()
+            version = self.textctrl_version.GetValue()
+            savepath = self.textctrl_save.GetValue()
+            bandle = self.bundle
 
-        name = self.textctrl_name.GetValue()
-        description = self.textctrl_description.GetValue()
-        header_uuid = self.textctrl_header_uuid.GetValue()
-        modules_uuid = self.textctrl_modules_uuid.GetValue()
-        version = self.textctrl_version.GetValue()
-        savepath = self.textctrl_save.GetValue()
-        bandle = self.bundle
-
-        if name == '':
-            Message().show(self, 'name が空欄です。')
-            return
-
-        elif header_uuid == '':
-            Message().show(self, 'header uuid が空欄です。')
-            return
-
-        elif modules_uuid == '':
-            Message().show(self, 'modules uuid が空欄です。')
-            return
-
-        elif self.bundle != []:
-            for dir_path in self.bundle:
-                if not os.path.isdir(dir_path):
-                    Message().show(self, '同梱するフォルダに無効なパス：' + dir_path)
-                    return
-
-        edition = self.get_selectedition()
-        ConfigManager().set_minecraft_edition(edition)
-        ConfigManager().set_select_version(self.combobox_version.GetStringSelection())
-
-        if savepath == '':
-            savepath = self.get_desktoppath()
-
-        if not os.path.isdir(savepath):
-            Message().show(self, '保存先を指定してください。')
-            return
-
-        ConfigManager().set_path_savefolder(savepath)
-
-        savepath = savepath.replace('\\', '/')
-        resourcepack = ''
-
-        flag_zip = self.checkbox_zip_compression.GetValue()
-
-        if edition == 'BE' and flag_zip == True:
-            resourcepack = os.path.join(savepath, name + '.mcpack')
-        elif edition == 'JE' and flag_zip == True:
-            resourcepack = os.path.join(savepath, name + '.zip')
-        else:
-            resourcepack = os.path.join(savepath, name)
-
-        resourcepack = resourcepack.replace('\\', '/')
-
-        if os.path.exists(resourcepack):
-            ans = Message().yes_no(self, 'エクスポート先に同一名のリソースパックが存在します。削除しますか？')
-            if ans:
-                if flag_zip:
-                    os.remove(resourcepack)
-                else:
-                    shutil.rmtree(resourcepack)
-            else:
+            if name == '':
+                Message().show(self, 'name が空欄です。')
                 return
 
-        if edition == 'BE':
-            self.clear_temp()
-            self._json_in_blankpack_BE()
-            self._manifest_in_blankpack(
-                name, description, header_uuid, modules_uuid, version)
-            self._add_directorys('BE', self.bundle)
+            elif header_uuid == '':
+                Message().show(self, 'header uuid が空欄です。')
+                return
 
-        elif edition == 'JE':
-            self.clear_temp()
-            self._json_in_blankpack_JE()
-            self._mcmeta_in_blankpack(description)
-            self._add_directorys('JE', self.bundle)
+            elif modules_uuid == '':
+                Message().show(self, 'modules uuid が空欄です。')
+                return
 
-        self._icon_in_blankpack(self.icon, edition)
+            elif self.bundle != []:
+                for dir_path in self.bundle:
+                    if not os.path.isdir(dir_path):
+                        Message().show(self, '同梱するフォルダに無効なパス：' + dir_path)
+                        return
 
-        if not self._newsource_in_blankpack(edition):
-            return
+            edition = self.get_selectedition()
+            ConfigManager().set_minecraft_edition(edition)
+            ConfigManager().set_select_version(self.combobox_version.GetStringSelection())
 
-        flag_zip = self.checkbox_zip_compression.GetValue()
-        ConfigManager().set_zip_compression(flag_zip)
+            if savepath == '':
+                savepath = self.get_desktoppath()
 
-        savepath_name = savepath + '/' + name
+            if not os.path.isdir(savepath):
+                Message().show(self, '保存先を指定してください。')
+                return
 
-        if flag_zip == True and edition == 'JE':
-            shutil.make_archive(savepath_name, 'zip', root_dir='./temp')
+            ConfigManager().set_path_savefolder(savepath)
 
-        elif flag_zip == True and edition == 'BE':
+            savepath = savepath.replace('\\', '/')
+            resourcepack = ''
 
-            savepath_temp = savepath + '/temp'
-            os.mkdir(savepath_temp)
-            savepath_temp_name = savepath_temp + '/' + name
-            shutil.make_archive(savepath_temp_name, 'zip', root_dir='./temp')
-            shutil.move(savepath_temp_name + '.zip', savepath_name + '.mcpack')
-            os.rmdir(savepath_temp)
+            flag_zip = self.checkbox_zip_compression.GetValue()
 
-        else:
-            shutil.copytree('./temp', savepath_name)
+            if edition == 'BE' and flag_zip == True:
+                resourcepack = os.path.join(savepath, name + '.mcpack')
+            elif edition == 'JE' and flag_zip == True:
+                resourcepack = os.path.join(savepath, name + '.zip')
+            else:
+                resourcepack = os.path.join(savepath, name)
 
-        Message().show(self, 'リソースパックを作成しました。')
-        self.save_database(self.database_index, name, self.icon, description,
-                           header_uuid, modules_uuid, version, bandle)  # 20230209
-        self.soundwindow.get_startwindow().updatelist()
-        self.soundwindow.Close()
+            resourcepack = resourcepack.replace('\\', '/')
+
+            if os.path.exists(resourcepack):
+                ans = Message().yes_no(self, 'エクスポート先に同一名のリソースパックが存在します。削除しますか？')
+                if ans:
+                    if flag_zip:
+                        os.remove(resourcepack)
+                    else:
+                        shutil.rmtree(resourcepack)
+                else:
+                    return
+
+            if edition == 'BE':
+                self.clear_temp()
+                self._json_in_blankpack_BE()
+                self._manifest_in_blankpack(
+                    name, description, header_uuid, modules_uuid, version)
+                self._add_directorys('BE', self.bundle)
+
+            elif edition == 'JE':
+                self.clear_temp()
+                self._json_in_blankpack_JE()
+                self._mcmeta_in_blankpack(description)
+                self._add_directorys('JE', self.bundle)
+
+            self._icon_in_blankpack(self.icon, edition)
+
+            if not self._newsource_in_blankpack(edition):
+                return
+
+            flag_zip = self.checkbox_zip_compression.GetValue()
+            ConfigManager().set_zip_compression(flag_zip)
+
+            savepath_name = savepath + '/' + name
+
+            if flag_zip == True and edition == 'JE':
+                shutil.make_archive(savepath_name, 'zip', root_dir='./temp')
+
+            elif flag_zip == True and edition == 'BE':
+
+                savepath_temp = savepath + '/temp'
+                os.mkdir(savepath_temp)
+                savepath_temp_name = savepath_temp + '/' + name
+                shutil.make_archive(savepath_temp_name,
+                                    'zip', root_dir='./temp')
+                shutil.move(savepath_temp_name + '.zip',
+                            savepath_name + '.mcpack')
+                os.rmdir(savepath_temp)
+
+            else:
+                shutil.copytree('./temp', savepath_name)
+
+            Message().show(self, 'リソースパックを作成しました。')
+            self.save_database(self.database_index, name, self.icon, description, header_uuid, modules_uuid, version,
+                               bandle)
+            self.soundwindow.get_startwindow().updatelist()
+            self.soundwindow.Close()
+
+        except PermissionError as e:
+            self._logging(
+                e, 'PermissionError : エクスポート失敗。ファイルアクセス権限に問題があります。処理を中断します。')
+
+        except UnicodeDecodeError as e:
+            self._logging(
+                e, 'UnicodeDecodeError : エクスポート失敗。ファイルエンコードに問題があります。処理を中断します。')
+
+        except FileNotFoundError as e:
+            self._logging(
+                e, 'FileNotFoundError : エクスポート失敗。存在しないファイルへのアクセス。処理を中断します。')
+
+        except Exception as e:
+            self._logging(e, 'Error : エクスポートに失敗しました。処理を中断します。')
 
     def get_selectedition(self):
         if self.radiobutton_BE.GetValue():
@@ -380,12 +400,11 @@ class PanelInput(wx.Panel):
             return False
 
         if index == -1:
-            DatabaseHelper().insert_record(name, icon, description, header_uuid,
-                                           modules_uuid, version, newsourcelist, bundle)
+            DatabaseHelper().insert_record(name, icon, description, header_uuid, modules_uuid, version, newsourcelist,
+                                           bundle)
         else:
-            DatabaseHelper().update_record(index, name, icon, description,
-                                           header_uuid, modules_uuid, version, newsourcelist, bundle)
-
+            DatabaseHelper().update_record(index, name, icon, description, header_uuid, modules_uuid, version,
+                                           newsourcelist, bundle)
         return True
 
     def get_desktoppath(self):
@@ -504,9 +523,9 @@ class PanelInput(wx.Panel):
 
         thread_processffmpeg = threading.Thread(
             target=self.thread_processffmpeg(newsourcelist, minecraft_edition))
+        thread_processffmpeg.start()
         thread_processffmpeg.join()
 
-        print('complate thread process ffmpeg !')
         return True
 
     def _add_directorys(self, edition, dirlist):
@@ -790,3 +809,12 @@ class PanelInput(wx.Panel):
                 return None
         else:
             return None
+
+    def _set_logging(self):
+        log_format = '[%(asctime)s] ---------------------------------------------------------------------------------------'
+        logging.basicConfig(filename='error.log',
+                            level=logging.ERROR, format=log_format)
+
+    def _logging(self, e, message):
+        logging.error(f'{e}', exc_info=True)
+        Message().show(self, message)
