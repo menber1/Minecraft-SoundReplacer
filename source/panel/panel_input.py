@@ -5,7 +5,9 @@ import threading
 import wx
 import uuid
 import ctypes
+import traceback
 import logging
+import datetime
 from ctypes import wintypes
 from PIL import Image
 from source.config_manager import ConfigManager
@@ -121,6 +123,8 @@ class PanelInput(wx.Panel):
 
         self.checkbox_zip_compression = wx.CheckBox(
             self, -1, 'ZIP', pos=(390, 225))
+        self.checkbox_zip_compression.SetToolTip(
+            'JE : zip圧縮化 | BE : mcpack化 | 手動カスタムする場合のみoff')
         if ConfigManager().get_zip_compression():
             self.checkbox_zip_compression.SetValue(True)
         else:
@@ -251,9 +255,11 @@ class PanelInput(wx.Panel):
                 return
 
             elif self.bundle != []:
-                for dir_path in self.bundle:
-                    if not os.path.isdir(dir_path):
-                        Message().show(self, '同梱するフォルダに無効なパス：' + dir_path)
+                for path_bundle_data in self.bundle:
+                    is_dir = os.path.isdir(path_bundle_data)
+                    is_file = os.path.isfile(path_bundle_data)
+                    if not is_dir and not is_file:
+                        Message().show(self, '同梱データに無効なパス：' + path_bundle_data)
                         return
 
             edition = self.get_selectedition()
@@ -279,7 +285,8 @@ class PanelInput(wx.Panel):
             elif edition == 'JE' and flag_zip == True:
                 resourcepack = os.path.join(savepath, name + '.zip')
             else:
-                resourcepack = os.path.join(savepath, name)
+                resourcepack = os.path.join(
+                    savepath, name)
 
             resourcepack = resourcepack.replace('\\', '/')
 
@@ -296,15 +303,18 @@ class PanelInput(wx.Panel):
             if edition == 'BE':
                 self.clear_temp()
                 self._json_in_blankpack_BE()
-                self._manifest_in_blankpack(
-                    name, description, header_uuid, modules_uuid, version)
-                self._add_directorys('BE', self.bundle)
+
+                if not self._is_manifest_json(self.bundle):
+                    self._manifest_in_blankpack(
+                        name, description, header_uuid, modules_uuid, version)
+
+                self._add_bundle_data('BE', self.bundle)
 
             elif edition == 'JE':
                 self.clear_temp()
                 self._json_in_blankpack_JE()
                 self._mcmeta_in_blankpack(description)
-                self._add_directorys('JE', self.bundle)
+                self._add_bundle_data('JE', self.bundle)
 
             self._icon_in_blankpack(self.icon, edition)
 
@@ -387,8 +397,8 @@ class PanelInput(wx.Panel):
         bmp = wx.Bitmap(self.icon)
         self.button_icon.SetBitmap(bmp)
 
-    def set_adddirectory(self, dirlist):
-        self.bundle = dirlist
+    def set_bundle_data(self, pathlist):
+        self.bundle = pathlist
         self.label_bundle.SetLabel("bundle: " + str(len(self.bundle)))
 
     def save_database(self, index, name, icon, description, header_uuid, modules_uuid, version, bundle):  # 20230209
@@ -528,14 +538,21 @@ class PanelInput(wx.Panel):
 
         return True
 
-    def _add_directorys(self, edition, dirlist):
-        for dir_x in dirlist:
+    def _add_bundle_data(self, edition, datalist):
+        for path_x in datalist:
             if edition == 'JE':
-                shutil.copytree(dir_x, os.path.join(
-                    './temp/assets/minecraft', os.path.basename(dir_x)))
+                path_dist = os.path.join(
+                    './temp/assets/minecraft', os.path.basename(path_x))
+                if os.path.isdir(path_x):
+                    shutil.copytree(path_x, path_dist)
+                elif os.path.isfile(path_x):
+                    shutil.copy(path_x, path_dist)
             elif edition == 'BE':
-                shutil.copytree(dir_x, os.path.join(
-                    './temp', os.path.basename(dir_x)))
+                path_dist = os.path.join('./temp', os.path.basename(path_x))
+                if os.path.isdir(path_x):
+                    shutil.copytree(path_x, path_dist)
+                if os.path.isfile(path_x):
+                    shutil.copy(path_x, path_dist)
 
     def convert_int_version(self, version):
 
@@ -818,3 +835,10 @@ class PanelInput(wx.Panel):
     def _logging(self, e, message):
         logging.error(f'{e}', exc_info=True)
         Message().show(self, message)
+
+    def _is_manifest_json(self, bundle_data_list):
+        for path in bundle_data_list:
+            filename = os.path.basename(path)
+            if filename == 'manifest.json':
+                return True
+            return False
