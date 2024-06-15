@@ -1,0 +1,206 @@
+
+////////////////////////////////////////////////////////////
+
+Minecraft アップデートにおけるSoundReplace対応手順
+
+////////////////////////////////////////////////////////////
+
+    a. JE リソースパックの準備 -------------------------------------
+
+        1. Minecraftアップデート後、最新リソースパックを以下のパスからコピーして入手。
+            C:\Users\naohide\AppData\Roaming\.minecraft\versions
+
+        2. フォルダ内から、1.21.jarを7-zipで展開。
+
+        3. 展開後、フォルダ名をリネームする。1.21　> Vanilla_Resource_Pack_1.21_JE
+
+        4. sounds.jsonを取得。( " b. sounds.json の取得 " を参照 )
+
+        5. 以下のパスにsounds.jsonを配置
+            Vanilla_Resource_Pack_1.21_JE/assets/minecraft/sounds.json
+            Vanilla_Resource_Pack_1.21_JEは、sounds.jsonを配置するためだけにある。
+            実際のフォルダ構造はVanilla_Resource_Pack_1.21ｊ側を参照する。
+
+        6. SoundReplacerのルートフォルダにVanilla_Resource_Pack_1.21_JEを配置。
+            旧Vanilla_Resource_Pack_1.20_JEを関連データフォルダに退避する。
+
+        7. SoundReplaceプロジェクトから、"Vanilla_Resource_Pack_1.20_JE"を文字列検索
+            使用箇所を割り出し、Vanilla_Resource_Pack_1.21_JEへ書き換える。
+
+    b. JE sounds.json の取得 -------------------------------------------
+
+        1. sounds.json を示すハッシュ値を取得する。
+            JEの場合、versionsフォルダから入手したリソースパックにはsounds.jsonは無いため、
+            デフォルトのファイルをコピーして入手する必要。Minecraftアップデート後、以下のパスから取得。
+
+            C:\Users\naohide\AppData\Roaming\.minecraft\assets\objects\2996cdf433988dd11f4c29547e2a644443159707
+
+            sounds.json は存在せず、ハッシュ値として隠蔽されているため、ハッシュ値を割り出す。
+            .minecraft/assets/indexes/17.jsonで "sounds.json" を検索し、対応するハッシュ値を発見する。
+
+            以下は、バージョンに対応するハッシュ値。
+            1.19 : "minecraft/sounds.json": {"hash": "a1daff5daa55f870c29becece97fc88e3da0b18e", "size": 412960}
+            1.20 : "minecraft/sounds.json": {"hash": "40a4222b7ada165fa98cb9215129aeb8d9b6b379", "size": 474399}
+            1.21 : "minecraft/sounds.json": {"hash": "2996cdf433988dd11f4c29547e2a644443159707", "size": 512936},
+
+        2. ハッシュ値がsounds.jsonであるか確認。
+            varsion 1.20　からファイル名規則が変更。17.jsonが、1.21に対応している。
+            ファイル更新日日時を見れば、Minecraftアップデートの日付になっているはず。
+            version 1.21 > 17.json ファイル更新日 2024/6/14
+            ハッシュ値ファイルを開き、新規で追加された新曲名を検索して表示されたらそれがsounds.json
+
+    c. レコードの追加に応じてテクスチャを自作
+        新レコードのテクスチャをMinecraftゲーム内からSnippingToolで切り取り、Greenfish でRGBをスポイトし、色合いを統一する。
+
+    d. 新曲の公開アドレスを入手。srl.csv に追加。
+        spotifyで新曲の視聴リンクを調べる。
+        srl.csvでは、以下の形式でcsvデータを記録する。
+        <コマンドとしての曲名>, <実際の曲名> , spotifyのアドレス
+        creator,Creator,https://open.spotify.com/intl-ja/track/1mbLvyFNIifliPtmMmRQN9
+        コマンドとしての曲名は、sounds.jsonで新曲を検索し、正式な名前を取得する。
+
+    e. packformat のversionを調査。
+        テスト用リソースパックを現行のSoundReplacerで作成。
+        pack.metaファイルのpackformat番号を変更しながら、Minecraftでリソースパックが適応できる番号を探す。
+
+    f. ConfigManagerClassのcreate_config()を編集
+
+        1. packformatを末尾に追加、|<minecraft version>,<packformat version>
+         config['packformat'] = {
+            'list_packformat': '1.16,6|1.17,7|1.18,8|1.19,9|1.19.3,12|1.19.4,13|1.20,15|1.20.2,18|1.20.4,22|1.20.6,32|1.21,34'
+        }
+
+        2. ['music']に新曲を追加。
+        config['music'] = {
+            'record': '11,13,5,blocks,cat,chirp,creator,creator_music_box,far,mall,mellohi,otherside,pigstep,precipice,relic,stal,strad,wait,ward',
+            'menu': 'menu1,menu2,menu3,menu4',
+            'game': 'a_familiar_room,aerie,ancestry,an_ordinary_day,bromeliad,calm1,calm2,calm3,comforting_memories,'
+                    'crescent_dunes,deeper,echo_in_the_wind,eld_unknown,endless,featherfall,firebugs,floating_dream,hal1,hal2,hal3,hal4,infinite_amethyst,'
+                    'komorebi,labyrinthine,left_to_bloom,nuance1,nuance2,one_more_day,piano1,piano2,piano3,pokopoko,puzzlebox,stand_tall,watcher,wending,yakusoku',
+            'creative': 'creative1,creative2,creative3,creative4,creative5,creative6',
+            'end': 'boss,credits,end',
+            'nether': 'chrysopoeia,nether1,nether2,nether3,nether4,rubedo,so_below',
+            'water': 'axolotl,dragon_fish,shuniji',
+            'note': 'banjo,bass,bd,bell,bit,cow_bell,didgeridoo,flute,guitar,harp,hat,icechime,iron_xylophone,pling,'
+                    'snare,xylobone'
+        }
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    a. BE リソースパックの入手 -----------------------------------------------------
+
+        help.minecraft.net の How do I use add-ons? 項目のresource pack リンクから入手。
+        https://help.minecraft.net/hc/en-us/articles/4409140076813-Minecraft-Add-Ons-for-Bedrock-Versions-FAQ
+        https://learn.microsoft.com/en-us/minecraft/creator/
+
+        もしくは、https://github.com/Mojang/bedrock-samples/releases　から直接latestバージョンをダウンロード
+
+    b. 必要なフォルダを取り出す ------------------------------------------------------
+
+        ダウンロードしたフォルダからsresource_packフォルダを取り出し、リネームする。
+        bedrock-samples-1.21.0.3\bedrock-samples-1.21.0.3\resource_pack
+        resource_pack > Vanilla_Rsource_Pack_1.20.0
+
+        以下のファイル、フォルダを残し全てを削除。
+        /sounds
+            /note
+            music_definitions.json
+            sound_definitions.json
+        manifest.json
+        pack_icon.png
+        sounds.json
+
+    c. noteフォルダにoggファイルを入れる。
+
+        noteフォルダにはfsbファイルが入っている。これをoggファイルと交換する。
+        SoundReplacerプロジェクトVanilla_Rsource_Pack_1.20.0 からoggを取得。
+        noteフォルダに保存されたoggは、SoundReplacerでのサンプル音源再生用。
+        bassattack.fsbはMinecraft音源として使用されていないため削除。oggは全16種となる。
+
+    d. musicフォルダの入手 ---------------------------------------------------------
+
+        ダウンロードしたBEリソースパックには、music, note フォルダは存在しない。
+        bedrock-samples-1.21.0.3\bedrock-samples-1.21.0.3\resource_pack
+
+        以下の場所からoggファイルを格納したmusicフォルダを取得する。
+        C:\Program Files\WindowsApps\Microsoft.MinecraftUWP_1.21.3.0_x64__8wekyb3d8bbwe\data\resource_packs\vanilla_music\sounds\music
+
+    e. musicフォルダ内のoggを0バイト変換する。
+
+        musicフォルダの全oggファイルを空ファイルに変換する。
+        フォルダツリーの構造のみを参照するため、実際のデータは必要無い。
+        関連データにあるreplace_ogg_files_with_empty.pyをidleで開き、
+        musicフォルダをルートディレクトリに設定して実行。
+
+    f. musicフォルダをSoundReplaceプロジェクトの以下の位置に配置。
+        全てのフォルダ、ファイル構成は以下になる。
+
+        /Vanilla_Resource_Pack_1.21.0
+            /sounds
+                /music
+                    /game
+                    /menu
+                /note
+                    ogg x 16
+                music_definitions.json
+                sound_definitions.json
+            manifest.json
+            pack_icon.png
+            sounds.json
+
+// FFmpeg ダウンロード ////////////////////////////////////////////////////////
+
+FFmpeg は以下のURLからダウンロードできる。7zを回答することでAPIを取り出せる。
+https://www.gyan.dev/ffmpeg/builds/
+ffmpeg-git-essentials.7z
+
+
+// version 1.20 追加曲 ////////////////////////////////////////////////////////
+
+    game/a_familiar_room これだけsound_definitions.jsonに記載が無かった。
+	game/bromeliad
+	game/crescent_dunes
+	game/echo_in_the_wind
+
+	records/relic
+
+// version 1.21 追加曲 ////////////////////////////////////////////////////////
+
+    Minecraft 1.21 bedrock changelog
+    https://www.minecraft.net/ja-jp/article/minecraft-1-21-bedrock-changelog
+    bgm
+    "Featherfall" by Aaron Cherof
+    "Deeper" by Lena Raine
+    "Eld Unknown" by Lena Raine
+    "Endless" by Lena Raine
+    "pokopoko" by Kumi Tanioka
+    "komorebi" by Kumi Tanioka
+    "Puzzlebox" by Aaron Cherof
+    "Watcher" by Aaron Cherof
+    "yakusoku" by Kumi Tanioka
+    record
+    "Precipice" by Aaron Cherof
+    "Creator" by Lena Raine
+    "Creator (Music Box)" by Lena Raine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
