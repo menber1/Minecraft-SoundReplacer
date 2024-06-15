@@ -285,8 +285,7 @@ class PanelInput(wx.Panel):
             elif edition == 'JE' and flag_zip == True:
                 resourcepack = os.path.join(savepath, name + '.zip')
             else:
-                resourcepack = os.path.join(
-                    savepath, name)
+                resourcepack = os.path.join(savepath, name)
 
             resourcepack = resourcepack.replace('\\', '/')
 
@@ -480,7 +479,7 @@ class PanelInput(wx.Panel):
 
     def _manifest_in_blankpack(self, name, description, header_uuid, modules_uuid, version):
 
-        json_template = './Vanilla_Resource_Pack_1.20.0/manifest.json'
+        json_template = './Vanilla_Resource_Pack_1.21.0/manifest.json'
         json_new = './temp/manifest.json'
 
         version = self.convert_int_version(version)
@@ -582,6 +581,9 @@ class PanelInput(wx.Panel):
 
                 if basename == 'bass.ogg':
                     basename = 'bassattack.ogg'
+
+                if basename == 'pigstep.ogg' and minecraft_edition == 'BE':
+                    basename = 'pigstep_master.ogg'
 
                 oggfile = distdir + '/' + basename
 

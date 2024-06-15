@@ -14,10 +14,10 @@ setup(
             'build_exe': 'build\\minecraft_soundreplacer',
             'packages': ['source'],
             'include_files': ['url.csv',
-                              'Vanilla_Resource_Pack_1.20.0\\',
-                              'Vanilla_Resource_Pack_1.20_JE\\',
+                              'Vanilla_Resource_Pack_1.21.0\\',
+                              'Vanilla_Resource_Pack_1.21_JE\\',
                               'image\\',
-                              'ffmpeg-6.0-essentials_build\\']
+                              'ffmpeg-7.0.1-essentials_build\\']
         }
     }
 )

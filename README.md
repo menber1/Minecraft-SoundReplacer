@@ -5,11 +5,11 @@ Minecraft-SoundReplacer
 
 //////////////////////////////////////////////////////////////////////
 
-Version : 0.8.6b
+Version : 0.9b
 
 License : GNU GENERAL PUBLIC LICENSE Version 3
  
-Libraries used : ffmpeg-6.0-essentials_build (GPLv3) 
+Libraries used : ffmpeg-7.0.1-essentials_build (GPLv3) 
 
 FFmpeg source code for the version used : /ffmpeg-snapshot.tar.bz2
 

@@ -2,10 +2,9 @@ import os
 import shutil
 import subprocess
 
-
 class FFmpegManager():
 
-    PATH_FFMPEG = './ffmpeg-6.0-essentials_build/bin/ffmpeg'
+    PATH_FFMPEG = './ffmpeg-7.0.1-essentials_build/bin/ffmpeg'
     PATH_BATFILE = 'ffmpeg_converter.bat'
 
     def __init__(self):
@@ -17,24 +16,22 @@ class FFmpegManager():
 
         return open(self.PATH_BATFILE, 'wt', encoding='utf-8')
 
-    def write_batfile(self, batfile, newsource, oggfile, mono=False):
 
+    def write_batfile(self, batfile, newsource, oggfile, mono=False):
         if os.path.splitext(newsource)[1] == '.ogg' and mono == False:
             shutil.copy(newsource, oggfile)
             command = 'echo : ' + oggfile + ' : bypass the ogg conversion process....'
             batfile.write(command)
             return
 
-        newsource = '"' + newsource + '"'
+        newsource = '"' + newsource + '"'  
         oggfile = '"' + oggfile + '"'
         ffmpeg_ = '"' + self.PATH_FFMPEG + '"'
 
         if mono == True:
-            command = 'chcp 65001' + '\n' + ffmpeg_ + ' -i ' + newsource + \
-                ' -ac 1 ' + oggfile + '\n'  # -ac 1 モノラル変換指定 chcp 65001 UTF-8指定　日本語パス対応
+            command = 'chcp 65001' + '\n' + ffmpeg_ + ' -i ' + newsource + ' -ac 1 ' + oggfile + '\n'  
         else:
-            command = 'chcp 65001' + '\n' + ffmpeg_ + \
-                ' -i ' + newsource + ' ' + oggfile + '\n'
+            command = 'chcp 65001' + '\n' + ffmpeg_ + ' -i ' + newsource + ' ' + oggfile + '\n'
 
         batfile.write(command)
         return
@@ -44,3 +41,5 @@ class FFmpegManager():
 
     def run_batfile(self):
         subprocess.run(self.PATH_BATFILE)
+
+
