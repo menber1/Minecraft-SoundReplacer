@@ -39,7 +39,7 @@ class SoundData(wx.Panel):
         self.button_clear = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_cancel.png'), pos=(self.HEIGHT + 35, 40), size=(16, 16))
         self.button_clear.SetBitmapPressed(wx.Bitmap('./image/button_cancel_on.png'))
         self.button_clear.SetBitmapCurrent(wx.Bitmap('./image/button_cancel_hover.png'))
-        self.button_clear.SetToolTip('設定消去')
+        self.button_clear.SetToolTip('指定解除')
         self.button_clear.Bind(wx.EVT_BUTTON, self.click_clear)
 
         self.button_select = wx.BitmapButton(self, -1, wx.Bitmap('./image/button_folder.png'), pos=(self.HEIGHT + 60, 40), size=(16, 16))

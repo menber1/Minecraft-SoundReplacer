@@ -5,6 +5,7 @@ import subprocess
 import wx
 
 from source.message import Message
+from source.window_path_setting import PathSettingWindow
 
 
 class WrapStaticText(wx.StaticText):
@@ -31,7 +32,7 @@ class WrapStaticText(wx.StaticText):
             path = os.path.normpath(path)
             subprocess.Popen(['explorer', path])
         else:
-            Message().show(self, 'ファイルが見つかりません。再設定してください。')
+            PathSettingWindow(self.parent, self.text, '無効なパス：音声ファイルを指定してください。')
 
     def resize(self, size):
 
