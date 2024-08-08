@@ -73,7 +73,7 @@ class ConfigManager:
         version = config.get('export', 'select_version')
         if version == '':
             latest = self.get_versionlist()
-            return latest[-1]
+            return latest[0]
         else:
             return version
 

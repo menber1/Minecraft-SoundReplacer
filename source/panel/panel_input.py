@@ -5,9 +5,7 @@ import threading
 import wx
 import uuid
 import ctypes
-import traceback
 import logging
-import datetime
 from ctypes import wintypes
 from PIL import Image
 from source.config_manager import ConfigManager
@@ -377,7 +375,7 @@ class PanelInput(wx.Panel):
         im = im.resize((128, 128))
         self.icon = os.path.join('./image_user', os.path.basename(path))
 
-        im.save(self.icon, quality=95)
+        im.save(self.icon, quality=95, format='PNG', icc_profile=None)
         bmp = wx.Bitmap(self.icon)
         self.button_icon.SetBitmap(bmp)
 

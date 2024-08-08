@@ -43,13 +43,33 @@ class PathSettingWindow(wx.Dialog):
     def click_ok(self, event):
         self.set_path()
 
+    def validate(self, path):
+        if path == '':
+            return "blank"
+        if not os.path.isfile(path):
+            return "not exist"
+        extensions = ('.mp3', '.wav', '.wma', '.flac', '.aac', '.ogg', '.m4a')
+        _, ext = os.path.splitext(path)
+        if ext.lower() in extensions:
+            return "yes audiofile"
+        else:
+            return "not audiofile"
+
+
     def set_path(self):
         path = self.textctrl.GetValue()
-        if path != '' and not os.path.exists(path):
-            Message().show(self, '指定されたパスは無効です。')
-        else:
+        ans = self.validate(path)
+
+        if ans == "blank":
+            self.sounddata_bgm.set_sourcepath('')
+            self.Close()
+        elif ans == "yes audiofile":
             self.sounddata_bgm.set_sourcepath(path)
-        self.Close()
+            self.Close()
+        elif ans == "not exist":
+            Message().show(self, "存在しないファイルパスです。")
+        elif ans == "not audiofile":
+            Message().show(self, "音声ファイルを指定してください。")
 
     def click_reference(self, event):
 

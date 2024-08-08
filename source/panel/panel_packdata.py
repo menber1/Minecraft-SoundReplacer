@@ -36,7 +36,6 @@ class PackdataPanel(wx.Panel):
             self.list_packdata.append(packdata)
             i = i + 1
         count = len(self.list_packdata)
-        print("count : ", count)
         totalheight = self.HEIGHT_PACKDATA * count
         self.scrolledwindow.SetScrollbars(0, self.HEIGHT_PACKDATA, 0, int(totalheight / self.HEIGHT_PACKDATA))
         self.resize()
